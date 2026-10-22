@@ -84,7 +84,7 @@
         <span class="text-xs text-[var(--muted-foreground)]">책마다 고유한 AI 그림과 놀이가 준비되어 있어요</span>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="themeButtons">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="themeButtons">
         <!-- Theme 1: Lily -->
         <button onclick="switchTheme('lily')" id="btn-lily" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 tab-active">
           <div class="flex justify-between items-start">
@@ -93,7 +93,7 @@
           </div>
           <div class="mt-2">
             <h3 class="font-bold text-base text-[var(--foreground)]">동물과 말하는 아이 릴리</h3>
-            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">고양이 슈미트 부인 & 강아지 본자이</p>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">고양이 슈미트 부인 & 본자이</p>
           </div>
         </button>
 
@@ -118,6 +118,18 @@
           <div class="mt-2">
             <h3 class="font-bold text-base text-[var(--foreground)]">고양이 늑대의 전설</h3>
             <p class="text-xs text-[var(--muted-foreground)] mt-0.5">달빛 숲의 신비한 크리처 캣울프</p>
+          </div>
+        </button>
+
+        <!-- Theme 4: Fantasy Resolvers -->
+        <button onclick="switchTheme('hwansang')" id="btn-hwansang" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-[var(--border)] hover:border-blue-400 bg-[var(--card)]">
+          <div class="flex justify-between items-start">
+            <span class="text-3xl">🔮🦊</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-200 text-blue-900">도시 판타지</span>
+          </div>
+          <div class="mt-2">
+            <h3 class="font-bold text-base text-[var(--foreground)]">환상 해결사</h3>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">반도깨비 겨울 & 늑대인간 유리</p>
           </div>
         </button>
       </div>
@@ -300,6 +312,9 @@
             </button>
             <button onclick="pickBlock('who', 'Baby Tengu', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500">
               👺 Baby Tengu (아기 텐구)
+            </button>
+            <button onclick="pickBlock('who', 'Gyeoul and Yuri', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500">
+              🔮 Gyeoul & Yuri (겨울과 유리)
             </button>
           </div>
         </div>
@@ -520,6 +535,41 @@
             { name: 'Cat-Wolf', top: '13%', left: '44%', width: '30%', height: '70%', correct: false, feedback: '멋진 캣울프예요! 캣울프 머리 뒤 하늘의 달을 터치해보세요!' }
           ]
         }
+      },
+      hwansang: {
+        id: 'hwansang',
+        title: '환상 해결사',
+        subtitle: 'The Mystery of the Fantasy Resolvers',
+        image: './hwansang_solvers_1792557503000.jpg',
+        sceneTitle: '반도깨비 겨울과 늑대인간 유리',
+        english: 'Yuri whispers: "Look at the strange blue light! Is it a Dokkaebi fire?"',
+        korean: '유리가 속삭여요: "저 이상한 푸른 빛을 봐! 도깨비불일까?"',
+        keyWords: ['blue fire (푸른 불꽃)', 'secret (비밀)', 'whisper (속삭이다)', 'werewolf (늑대인간)'],
+        choices: [
+          {
+            text: '"Let\'s investigate together!"',
+            subtext: '함께 조사하러 가자! (용감하게 사건 추리하기)',
+            reply: '겨울이가 도깨비불을 밝히며 "좋았어! 환상 해결사 출동이야!" 하고 외쳤어요!',
+            badge: '🔍 일등 환상 해결사'
+          },
+          {
+            text: '"Yuri, use your wolf senses!"',
+            subtext: '유리야, 늑대의 감각을 써봐! (유리의 늑대 귀 쫑긋)',
+            reply: '유리가 늑대 귀를 쫑긋거리며 "쉿, 비밀 골목에서 소리가 들려!" 하고 앞장섰어요!',
+            badge: '🐺 늑대의 감각'
+          }
+        ],
+        ispy: {
+          image: './hwansang_solvers_1792557503000.jpg',
+          question: 'Touch the smiling blue Dokkaebi fire in Gyeoul\'s hand!',
+          audioText: 'Touch the smiling blue Dokkaebi fire in Gyeoul\'s hand!',
+          korean: '겨울이의 손 위에 떠 있는 귀여운 푸른 도깨비불을 터치하세요!',
+          hotspots: [
+            { name: 'Blue Fire', top: '34%', left: '31%', width: '10%', height: '17%', correct: true, feedback: '찾았다! 따뜻하게 빛나는 귀여운 도깨비불이에요!' },
+            { name: 'Yuri', top: '13%', left: '55%', width: '25%', height: '75%', correct: false, feedback: '신비로운 늑대인간 소년 유리예요! 겨울이의 손 위를 찾아보세요!' },
+            { name: 'Gyeoul', top: '26%', left: '35%', width: '23%', height: '70%', correct: false, feedback: '용감한 반도깨비 소녀 겨울이예요! 손바닥 위의 불꽃을 터치해보세요!' }
+          ]
+        }
       }
     };
 
@@ -531,16 +581,18 @@
       currentThemeKey = themeKey;
 
       // Update Theme Button Active States
-      ['lily', 'yasuke', 'catwolf'].forEach(key => {
+      ['lily', 'yasuke', 'catwolf', 'hwansang'].forEach(key => {
         const btn = document.getElementById(`btn-${key}`);
+        if (!btn) return;
         if (key === themeKey) {
           btn.classList.add('tab-active');
           btn.classList.remove('border-[var(--border)]');
           if (key === 'lily') btn.classList.add('border-emerald-500', 'bg-emerald-50/30');
           if (key === 'yasuke') btn.classList.add('border-amber-500', 'bg-amber-50/30');
           if (key === 'catwolf') btn.classList.add('border-purple-500', 'bg-purple-50/30');
+          if (key === 'hwansang') btn.classList.add('border-blue-500', 'bg-blue-50/30');
         } else {
-          btn.classList.remove('tab-active', 'border-emerald-500', 'border-amber-500', 'border-purple-500', 'bg-emerald-50/30', 'bg-amber-50/30', 'bg-purple-50/30');
+          btn.classList.remove('tab-active', 'border-emerald-500', 'border-amber-500', 'border-purple-500', 'border-blue-500', 'bg-emerald-50/30', 'bg-amber-50/30', 'bg-purple-50/30', 'bg-blue-50/30');
           btn.classList.add('border-[var(--border)]');
         }
       });
