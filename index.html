@@ -7,21 +7,27 @@
   <style>
     @keyframes bounce-gentle {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-5px); }
+      50% { transform: translateY(-6px); }
     }
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
-      50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.7); }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
     .animate-gentle {
       animation: bounce-gentle 2.5s infinite ease-in-out;
     }
-    .pulse-glow {
-      animation: pulse-glow 2s infinite;
+    .pulse-mic {
+      animation: pulse-ring 1.8s infinite;
     }
     .tab-active {
       box-shadow: 0 6px 16px -2px rgba(0,0,0,0.12);
       transform: translateY(-2px);
+    }
+    .choice-selected {
+      border-color: #8b5cf6 !important;
+      background-color: rgba(139, 92, 246, 0.1) !important;
+      box-shadow: 0 0 0 2px #8b5cf6;
     }
     .interactive-hotspot {
       position: absolute;
@@ -50,7 +56,7 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">초등 2학년 수아의 비밀 연구소</span>
-            <span class="text-xs text-[var(--muted-foreground)]">AI 생성 이미지 & 스토리 러닝</span>
+            <span class="text-xs text-[var(--muted-foreground)]">주제별 5개 씬 & 음성 인식(STT) 스피킹</span>
           </div>
           <h1 class="text-2xl font-bold tracking-tight text-[var(--foreground)] mt-0.5">수아의 책 속 영어 모험 🏰</h1>
         </div>
@@ -70,7 +76,7 @@
         <div class="w-px h-8 bg-[var(--border)]"></div>
         <div class="text-center">
           <p class="text-xs text-[var(--muted-foreground)]">모험가 레벨</p>
-          <p class="text-lg font-bold text-purple-600">Lv.2 숲의 친구</p>
+          <p class="text-lg font-bold text-purple-600" id="adventurerLevel">Lv.2 숲의 친구</p>
         </div>
       </div>
     </header>
@@ -79,9 +85,9 @@
     <section class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-base md:text-lg font-bold flex items-center gap-2">
-          <span>🌟</span> 오늘 모험할 책을 선택하세요!
+          <span>🌟</span> 오늘 모험할 책을 선택하세요! (각 주제당 5개 씬 완비)
         </h2>
-        <span class="text-xs text-[var(--muted-foreground)]">책마다 고유한 AI 그림과 놀이가 준비되어 있어요</span>
+        <span class="text-xs text-[var(--muted-foreground)]">선택 시 해당 동화의 5개 씬으로 이동합니다</span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="themeButtons">
@@ -89,11 +95,11 @@
         <button onclick="switchTheme('lily')" id="btn-lily" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 tab-active">
           <div class="flex justify-between items-start">
             <span class="text-3xl">🐱🌿</span>
-            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900">숲속 교감</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900">숲속 5씬</span>
           </div>
           <div class="mt-2">
             <h3 class="font-bold text-base text-[var(--foreground)]">동물과 말하는 아이 릴리</h3>
-            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">고양이 슈미트 부인 & 본자이</p>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">슈미트 부인 & 늑대 아스칸</p>
           </div>
         </button>
 
@@ -101,11 +107,11 @@
         <button onclick="switchTheme('yasuke')" id="btn-yasuke" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-[var(--border)] hover:border-amber-400 bg-[var(--card)]">
           <div class="flex justify-between items-start">
             <span class="text-3xl">🏮🍼</span>
-            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">육아 판타지</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">육아 5씬</span>
           </div>
           <div class="mt-2">
             <h3 class="font-bold text-base text-[var(--foreground)]">요괴의 아이를 돌봐드립니다</h3>
-            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">야스케 & 아기 텐구·불도깨비</p>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">야스케 & 아기 텐구·목욕·낮잠</p>
           </div>
         </button>
 
@@ -113,11 +119,11 @@
         <button onclick="switchTheme('catwolf')" id="btn-catwolf" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-[var(--border)] hover:border-purple-400 bg-[var(--card)]">
           <div class="flex justify-between items-start">
             <span class="text-3xl">🐾🌙</span>
-            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-200 text-purple-900">수아의 창작</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-200 text-purple-900">상상 5씬</span>
           </div>
           <div class="mt-2">
             <h3 class="font-bold text-base text-[var(--foreground)]">고양이 늑대의 전설</h3>
-            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">달빛 숲의 신비한 크리처 캣울프</p>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">날개 캣울프 & 크리스탈 동굴</p>
           </div>
         </button>
 
@@ -125,7 +131,7 @@
         <button onclick="switchTheme('hwansang')" id="btn-hwansang" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-[var(--border)] hover:border-blue-400 bg-[var(--card)]">
           <div class="flex justify-between items-start">
             <span class="text-3xl">🔮🦊</span>
-            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-200 text-blue-900">도시 판타지</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-200 text-blue-900">추리 5씬</span>
           </div>
           <div class="mt-2">
             <h3 class="font-bold text-base text-[var(--foreground)]">환상 해결사</h3>
@@ -135,33 +141,51 @@
       </div>
     </section>
 
-    <!-- Activity Mode Bar (Various Fun Activities) -->
+    <!-- Activity Mode Bar -->
     <nav class="flex flex-wrap items-center gap-2 border-b border-[var(--border)] pb-2">
       <button onclick="switchActivity('story')" id="act-story" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 transition">
-        <span>📖</span> 1. 스토리북 모험
+        <span>📖</span> 1. 스토리북 모험 (5개 씬)
       </button>
       <button onclick="switchActivity('ispy')" id="act-ispy" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--sidebar)] text-[var(--foreground)] flex items-center gap-1.5 transition">
         <span>🔍</span> 2. 그림 속 숨은 단어 찾기 (I-Spy)
       </button>
       <button onclick="switchActivity('maker')" id="act-maker" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--sidebar)] text-[var(--foreground)] flex items-center gap-1.5 transition">
-        <span>🎨</span> 3. AI 마법 그림 공방
+        <span>🎨</span> 3. AI 마법 그림 공방 & 도감
       </button>
       <button onclick="switchActivity('quiz')" id="act-quiz" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--sidebar)] text-[var(--foreground)] flex items-center gap-1.5 transition">
         <span>⚡</span> 4. 마법 주문 배틀
       </button>
     </nav>
 
-    <!-- ================= ACTIVITY 1: STORY QUEST ================= -->
+    <!-- ================= ACTIVITY 1: STORY QUEST (5 SCENES PER THEME) ================= -->
     <section id="panel-story" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-6">
       
+      <!-- Scene Step Indicator Bar -->
+      <div class="bg-[var(--sidebar)] p-4 rounded-xl border border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-purple-100 text-purple-800" id="sceneBadge">
+            Scene 1 / 5
+          </span>
+          <span class="text-xs font-semibold text-[var(--muted-foreground)]" id="sceneProgressText">이야기 진행 단계</span>
+        </div>
+        <!-- 5 Steps Dots -->
+        <div class="flex items-center gap-2" id="sceneDots">
+          <button onclick="goToScene(0)" class="w-8 h-8 rounded-full text-xs font-bold bg-purple-600 text-white flex items-center justify-center shadow-sm">1</button>
+          <button onclick="goToScene(1)" class="w-8 h-8 rounded-full text-xs font-bold bg-[var(--card)] border border-[var(--border)] flex items-center justify-center">2</button>
+          <button onclick="goToScene(2)" class="w-8 h-8 rounded-full text-xs font-bold bg-[var(--card)] border border-[var(--border)] flex items-center justify-center">3</button>
+          <button onclick="goToScene(3)" class="w-8 h-8 rounded-full text-xs font-bold bg-[var(--card)] border border-[var(--border)] flex items-center justify-center">4</button>
+          <button onclick="goToScene(4)" class="w-8 h-8 rounded-full text-xs font-bold bg-[var(--card)] border border-[var(--border)] flex items-center justify-center">5</button>
+        </div>
+      </div>
+
       <!-- AI Illustration Display Area -->
       <div class="relative rounded-2xl overflow-hidden border border-[var(--border)] shadow-md bg-black/5 group">
-        <img id="storyMainImage" src="./liliane_susewind_forest_1792557501868.jpg" alt="Story Illustration" class="w-full h-72 md:h-96 object-cover object-center transition duration-500 hover:scale-105">
-        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 text-white flex flex-col md:flex-row md:items-end justify-between gap-3">
+        <img id="storyMainImage" src="./liliane_susewind_forest_1792557501868.jpg" alt="Story Illustration" class="w-full h-72 md:h-96 object-cover object-center transition duration-500">
+        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-5 text-white flex flex-col md:flex-row md:items-end justify-between gap-3">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 font-bold" id="storySceneTag">Scene 1</span>
-              <span class="text-xs opacity-80" id="storySubtitle">AI 스토리 삽화</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 font-bold" id="storySceneTag">Scene 1 / 5</span>
+              <span class="text-xs opacity-90" id="storySubtitle">AI 스토리 삽화</span>
             </div>
             <h3 class="text-xl md:text-2xl font-bold drop-shadow" id="storySceneTitle">숲속의 릴리와 슈미트 부인</h3>
           </div>
@@ -171,7 +195,7 @@
         </div>
       </div>
 
-      <!-- Dialogue & Learning Box -->
+      <!-- Dialogue Box -->
       <div class="bg-[var(--sidebar)] border border-[var(--border)] rounded-xl p-5 space-y-4">
         <div class="space-y-1">
           <p class="text-lg md:text-xl font-bold text-[var(--foreground)] leading-relaxed" id="englishText">
@@ -193,43 +217,55 @@
         </div>
       </div>
 
-      <!-- Choices & Mic Action -->
-      <div class="space-y-3">
-        <label class="text-sm font-bold text-[var(--foreground)] flex items-center justify-between">
-          <span>🗣️ 수아의 마법 선택 (영어로 말하거나 버튼을 눌러보세요!)</span>
-          <span class="text-xs text-emerald-600 font-medium">✨ 선택에 따라 이야기가 달라져요</span>
-        </label>
+      <!-- Speech-First Choice Section -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <label class="text-sm font-bold text-[var(--foreground)] flex items-center gap-2">
+            <span>🗣️</span> 1단계: 버튼을 눌러 발음을 듣고, 2단계: 마이크로 직접 말해 선택하세요!
+          </label>
+          <span class="text-xs text-purple-600 font-semibold">🎙️ 음성 인식 스피킹 전용</span>
+        </div>
 
+        <!-- Choice Listen Buttons (Click to listen, then speak to confirm) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="choiceOptions">
           <!-- Dynamically populated -->
         </div>
 
-        <!-- Mic Emulation -->
-        <div class="bg-[var(--card)] border border-dashed border-[var(--border)] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <button onclick="simulateMic()" id="micBtn" class="w-12 h-12 rounded-full bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center text-2xl transition shadow-sm">
-              🎙️
+        <!-- Speech Target & Recognition Area -->
+        <div id="speechActionBox" class="bg-purple-50/50 dark:bg-purple-950/20 border-2 border-dashed border-purple-300 dark:border-purple-800 rounded-xl p-5 space-y-3">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+              <button onclick="startVoiceRecognition()" id="micBtn" class="w-14 h-14 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center text-2xl transition shadow-md pulse-mic">
+                🎙️
+              </button>
+              <div>
+                <p class="text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wide" id="speechGoalLabel">말하기 목표 문장</p>
+                <p class="text-base font-extrabold text-[var(--foreground)]" id="speechGoalText">"위의 선택지 버튼을 먼저 눌러 발음을 들어보세요!"</p>
+                <p class="text-xs text-[var(--muted-foreground)] mt-0.5" id="speechLiveTranscript">마이크 버튼을 누르고 큰 소리로 영어 문장을 말해보세요.</p>
+              </div>
+            </div>
+
+            <!-- Helpful kid bypass button (never stuck) -->
+            <button onclick="passSpeakingStep()" id="helperPassBtn" class="hidden text-xs px-3 py-2 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold transition">
+              🌟 씩씩하게 말했어요! (통과하기)
             </button>
+          </div>
+        </div>
+
+        <!-- Success Reaction Banner & Next Scene Button -->
+        <div id="feedbackBanner" class="hidden rounded-xl p-4 border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-900 dark:text-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-start gap-3">
+            <span class="text-3xl" id="feedbackEmoji">🎉</span>
             <div>
-              <p class="text-sm font-bold" id="micStatusTitle">마이크를 누르고 영어로 말해보기</p>
-              <p class="text-xs text-[var(--muted-foreground)]" id="micStatusDesc">"Don't worry, baby bird!" 라고 소리 내어 말해보세요!</p>
+              <h4 class="font-bold text-sm" id="feedbackTitle">스피킹 성공! 칭호 획득!</h4>
+              <p class="text-xs mt-0.5" id="feedbackDesc">동물 친구들이 수아의 목소리를 듣고 기뻐합니다!</p>
             </div>
           </div>
-          <button onclick="nextStoryScene()" id="nextBtn" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow transition hidden">
-            다음 이야기로 진행 ➡️
+          <button onclick="advanceNextScene()" id="nextBtn" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow transition self-end sm:self-auto">
+            다음 장면으로 진행 (Next Scene) ➡️
           </button>
         </div>
-      </div>
 
-      <!-- Feedback Reaction Banner -->
-      <div id="feedbackBanner" class="hidden rounded-xl p-4 border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-900 dark:text-emerald-200">
-        <div class="flex items-start gap-3">
-          <span class="text-3xl" id="feedbackEmoji">🎉</span>
-          <div>
-            <h4 class="font-bold text-sm" id="feedbackTitle">훌륭해요! 칭호 획득!</h4>
-            <p class="text-xs mt-0.5" id="feedbackDesc">캐릭터 반응</p>
-          </div>
-        </div>
       </div>
 
     </section>
@@ -248,7 +284,6 @@
         </div>
       </div>
 
-      <!-- Current I-Spy Mission Prompt Box -->
       <div class="bg-[var(--sidebar)] border border-blue-200 dark:border-blue-900 rounded-xl p-4 flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <span class="text-3xl animate-bounce">🎯</span>
@@ -264,23 +299,17 @@
         </button>
       </div>
 
-      <!-- Clickable Hotspot Image Area -->
       <div class="relative rounded-2xl overflow-hidden border border-[var(--border)] select-none">
         <img id="ispyImage" src="./liliane_susewind_forest_1792557501868.jpg" alt="I Spy Image" class="w-full h-80 md:h-[450px] object-cover object-center">
-        
-        <!-- Hotspots Container -->
-        <div id="hotspotContainer" class="absolute inset-0">
-          <!-- Dynamically populated per theme -->
-        </div>
+        <div id="hotspotContainer" class="absolute inset-0"></div>
       </div>
 
-      <!-- Discovery Result Toast -->
       <div id="ispyToast" class="hidden p-4 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 text-emerald-950 dark:text-emerald-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <span class="text-2xl">✨</span>
           <div>
             <p class="font-bold text-sm" id="ispyToastTitle">정답입니다! (Bingo!)</p>
-            <p class="text-xs" id="ispyToastDesc">You found Mrs. Schmidt! She purrs happily.</p>
+            <p class="text-xs" id="ispyToastDesc">You found it!</p>
           </div>
         </div>
         <button onclick="nextIspyMission()" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs">
@@ -289,22 +318,20 @@
       </div>
     </section>
 
-    <!-- ================= ACTIVITY 3: AI DRAWING STUDIO ================= -->
+    <!-- ================= ACTIVITY 3: AI DRAWING STUDIO & COLLECTION ================= -->
     <section id="panel-maker" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-6 hidden">
       <div>
         <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold">수아의 창작 스튜디오</span>
         <h3 class="text-xl font-bold mt-1">🎨 단어 블록으로 새 AI 그림 주문하기</h3>
-        <p class="text-xs text-[var(--muted-foreground)]">수아가 좋아하는 영어 단어 블록들을 골라 주문을 외우면 새로운 상상 그림 카드가 탄생해요!</p>
+        <p class="text-xs text-[var(--muted-foreground)]">수아가 좋아하는 영어 단어 블록들을 골라 주문을 외우면 다양한 AI 그림 카드가 생성됩니다!</p>
       </div>
 
-      <!-- Block Selector UI -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
-        <!-- Block 1: Who -->
+        <!-- Who -->
         <div class="bg-[var(--sidebar)] p-4 rounded-xl border border-[var(--border)] space-y-2">
           <label class="text-xs font-bold text-purple-600 uppercase tracking-wider">1. 누가? (Who)</label>
           <div class="space-y-1.5" id="whoBlocks">
-            <button onclick="pickBlock('who', 'Cat-Wolf', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500">
+            <button onclick="pickBlock('who', 'Cat-Wolf', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500 font-bold border-purple-500 bg-purple-50">
               🐾 Cat-Wolf (고양이 늑대)
             </button>
             <button onclick="pickBlock('who', 'Mrs. Schmidt', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500">
@@ -319,11 +346,11 @@
           </div>
         </div>
 
-        <!-- Block 2: Where -->
+        <!-- Where -->
         <div class="bg-[var(--sidebar)] p-4 rounded-xl border border-[var(--border)] space-y-2">
           <label class="text-xs font-bold text-blue-600 uppercase tracking-wider">2. 어디서? (Where)</label>
           <div class="space-y-1.5" id="whereBlocks">
-            <button onclick="pickBlock('where', 'under the silver moon', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-blue-500">
+            <button onclick="pickBlock('where', 'under the silver moon', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-blue-500 font-bold border-blue-500 bg-blue-50">
               🌙 under the silver moon (은빛 달 아래서)
             </button>
             <button onclick="pickBlock('where', 'in the rainbow garden', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-blue-500">
@@ -335,11 +362,11 @@
           </div>
         </div>
 
-        <!-- Block 3: Action -->
+        <!-- Action -->
         <div class="bg-[var(--sidebar)] p-4 rounded-xl border border-[var(--border)] space-y-2">
           <label class="text-xs font-bold text-emerald-600 uppercase tracking-wider">3. 무엇을 해? (Action)</label>
           <div class="space-y-1.5" id="actionBlocks">
-            <button onclick="pickBlock('action', 'eating sweet apple pie', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500">
+            <button onclick="pickBlock('action', 'eating sweet apple pie', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500 font-bold border-emerald-500 bg-emerald-50">
               🥧 eating sweet apple pie (달콤한 파이 먹기)
             </button>
             <button onclick="pickBlock('action', 'wearing a shiny gold crown', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500">
@@ -350,10 +377,9 @@
             </button>
           </div>
         </div>
-
       </div>
 
-      <!-- Generated Sentence & Magic Spell Button -->
+      <!-- Magic Spell Button -->
       <div class="bg-[var(--sidebar)] border-2 border-dashed border-purple-300 dark:border-purple-800 rounded-xl p-5 space-y-4">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-purple-700 dark:text-purple-300">완성된 수아의 영어 주문 문장:</span>
@@ -368,7 +394,7 @@
         </button>
       </div>
 
-      <!-- Result Card Modal/Preview -->
+      <!-- Result Card -->
       <div id="makerResultCard" class="hidden rounded-2xl border-2 border-purple-400 bg-purple-50/70 dark:bg-purple-950/30 p-5 flex flex-col md:flex-row items-center gap-5 shadow-lg transition-all">
         <img id="makerResultImg" src="./cat_wolf_storybook_1792557502059.jpg" class="w-48 h-48 rounded-xl object-cover shadow-md border-2 border-white dark:border-purple-800">
         <div class="space-y-2 text-center md:text-left flex-1">
@@ -387,7 +413,7 @@
         </div>
       </div>
 
-      <!-- Collected Cards Gallery (수아의 카드 도감) -->
+      <!-- Card Album Grid -->
       <div class="space-y-3 pt-5 border-t border-[var(--border)]">
         <div class="flex items-center justify-between">
           <h4 class="font-bold text-base flex items-center gap-2">
@@ -395,9 +421,7 @@
           </h4>
           <span class="text-xs text-[var(--muted-foreground)]">카드를 누르면 주문을 다시 들을 수 있어요</span>
         </div>
-        <div id="cardsGalleryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          <!-- Populated by JavaScript -->
-        </div>
+        <div id="cardsGalleryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
       </div>
 
     </section>
@@ -439,46 +463,133 @@
     <footer class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 text-xs text-[var(--muted-foreground)] flex flex-col md:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-2">
         <span class="text-lg">💖</span>
-        <span>수아의 흥미와 상상력에 맞춰 언제든 새로운 책과 놀이 모드를 확장할 수 있습니다.</span>
+        <span>수아의 상상력과 말하기 자신감을 키우는 영어 모험 플레이그라운드</span>
       </div>
       <div class="flex items-center gap-2 font-semibold">
-        <span>이미지 스타일: 따뜻한 수채화 동화책풍</span>
+        <span>Web Speech API 마이크 음성 인식 연동</span>
       </div>
     </footer>
 
   </div>
 
   <script>
-    // Theme Database with Real Generated Image Paths
+    // 20 Full Scenes Database (4 Themes * 5 Scenes Each with Dedicated Artwork)
     const themes = {
       lily: {
         id: 'lily',
         title: '동물과 말하는 아이 릴리',
         subtitle: 'The Secret Animal Whispering Woods',
-        image: './liliane_susewind_forest_1792557501868.jpg',
-        sceneTitle: '숲속의 릴리와 슈미트 부인',
-        english: 'Mrs. Schmidt says: "Look up! A tiny baby bird fell from the nest!"',
-        korean: '슈미트 부인이 말해요: "저기 위를 봐! 아주 작은 아기 새가 둥지에서 떨어졌어!"',
-        keyWords: ['baby bird (아기 새)', 'fell (떨어졌다)', 'nest (둥지)'],
-        choices: [
+        scenes: [
           {
-            text: '"Don\'t worry, baby bird!"',
-            subtext: '걱정 마, 아기 새야! (상냥하게 안심시키기)',
-            reply: 'Purr~ 아기 새가 수아의 목소리를 듣고 안심했어요!',
-            badge: '🌱 숲의 속삭임'
+            sceneTitle: '숲속의 릴리와 높은 나무 위의 아기 새',
+            image: './liliane_susewind_forest_1792557501868.jpg',
+            english: 'Mrs. Schmidt says: "Look up! A tiny baby bird fell from the nest!"',
+            korean: '슈미트 부인이 말해요: "저기 위를 봐! 아주 작은 아기 새가 둥지에서 떨어졌어!"',
+            keyWords: ['baby bird (아기 새)', 'fell (떨어졌다)', 'nest (둥지)'],
+            choices: [
+              {
+                text: 'Don\'t worry, baby bird!',
+                subtext: '걱정 마, 아기 새야! (상냥하게 안심시키기)',
+                reply: 'Purr~ 아기 새가 수아의 목소리를 듣고 안심했어요!',
+                badge: '🌱 숲의 속삭임'
+              },
+              {
+                text: 'Bonsai, help us gently!',
+                subtext: '본자이야, 조심해서 도와줘! (강아지 본자이 부르기)',
+                reply: '본자이가 꼬리를 흔들며 푹신한 나뭇잎을 물어왔어요!',
+                badge: '🐾 본자이의 친구'
+              }
+            ]
           },
           {
-            text: '"Bonsai, help us gently!"',
-            subtext: '본자이야, 조심해서 도와줘! (강아지 본자이 부르기)',
-            reply: '본자이가 꼬리를 흔들며 푹신한 나뭇잎을 물어왔어요!',
-            badge: '🐾 본자이의 친구'
+            sceneTitle: '무지개 정원의 여왕 슈미트 부인',
+            image: './schmidt_crown.jpg',
+            english: 'Mrs. Schmidt wears a crown: "Look at my golden crown! Praise me, Sua!"',
+            korean: '슈미트 부인이 금관을 쓰고 말해요: "내 황금 왕관을 봐! 나를 칭찬해 줘, 수아야!"',
+            keyWords: ['golden crown (황금 왕관)', 'praise (칭찬하다)', 'queen (여왕)'],
+            choices: [
+              {
+                text: 'You look like a beautiful queen!',
+                subtext: '아름다운 여왕님 같아요! (고양이 칭찬하기)',
+                reply: '슈미트 부인이 기분 좋게 그르렁거리며 수아에게 다가왔어요!',
+                badge: '👑 고양이 여왕의 축복'
+              },
+              {
+                text: 'Your golden crown is so shiny!',
+                subtext: '왕관이 정말 눈부시게 빛나요! (반짝임 칭찬)',
+                reply: '슈미트 부인이 꼬리를 우아하게 세우며 하트 눈을 보냈어요!',
+                badge: '✨ 반짝이는 눈썰미'
+              }
+            ]
+          },
+          {
+            sceneTitle: '호숫가에서 목마른 아기 사슴 돕기',
+            image: './lily_scene3_deer.jpg',
+            english: 'The little deer whispers: "I am thirsty! Can you show me clear water?"',
+            korean: '작은 아기 사슴이 속삭여요: "목이 말라요! 맑은 물이 어디 있는지 알려줄래요?"',
+            keyWords: ['thirsty (목마른)', 'little deer (아기 사슴)', 'clear water (맑은 물)'],
+            choices: [
+              {
+                text: 'Follow me to the fresh water!',
+                subtext: '맑은 물이 있는 곳으로 날 따라와! (길 안내하기)',
+                reply: '아기 사슴이 퐁당퐁당 시원하게 물을 마시고 고마워했어요!',
+                badge: '💧 시원한 호수 친구'
+              },
+              {
+                text: 'Drink slowly, sweet deer!',
+                subtext: '천천히 마셔, 예쁜 사슴아! (다정하게 배려하기)',
+                reply: '릴리와 본자이가 아기 사슴 곁을 따뜻하게 지켜주었습니다!',
+                badge: '🦌 숲의 수호천사'
+              }
+            ]
+          },
+          {
+            sceneTitle: '외톨이 늑대 아스칸과의 조우',
+            image: './lily_scene4_askan.jpg',
+            english: 'Wolf Askan gazes with kind amber eyes: "Are you lost in the deep pine woods?"',
+            korean: '늑대 아스칸이 다정한 호박색 눈으로 바라보며 물어요: "깊은 소나무 숲에서 길을 잃었니?"',
+            keyWords: ['wolf (늑대)', 'deep woods (깊은 숲)', 'guide (안내하다)'],
+            choices: [
+              {
+                text: 'We are brave friends with Lily!',
+                subtext: '우리는 릴리와 함께하는 용감한 친구야! (용기 있게 답하기)',
+                reply: '아스칸이 고개를 끄덕이며 숲의 비밀 지름길을 열어주었어요!',
+                badge: '🐺 늑대의 우정'
+              },
+              {
+                text: 'Please guide our way, Askan!',
+                subtext: '우리의 길을 안내해 줘, 아스칸! (도움 청하기)',
+                reply: '아스칸이 든든한 걸음으로 앞장서며 숲길을 밝혀주었습니다!',
+                badge: '🌲 지혜로운 인도자'
+              }
+            ]
+          },
+          {
+            sceneTitle: '릴리의 웃음과 꽃 피우기 대축제',
+            image: './lily_scene5_bloom.jpg',
+            english: 'Lily laughs with joy! Flowers bloom everywhere! "Let us dance together!"',
+            korean: '릴리가 기쁘게 웃자 온 숲에 꽃이 피어나요! "우리 모두 함께 춤추자!"',
+            keyWords: ['bloom (꽃피다)', 'laugh with joy (기쁘게 웃다)', 'dance together (함께 춤추다)'],
+            choices: [
+              {
+                text: 'Bloom high, magic rainbow flowers!',
+                subtext: '높이 피어나라, 마법의 무지개 꽃들아! (마법 주문 외우기)',
+                reply: '수천 송이의 무지개 꽃잎이 눈꽃처럼 쏟아져 내렸어요!',
+                badge: '🌸 꽃피우기 마스터'
+              },
+              {
+                text: 'Thank you, my animal friends!',
+                subtext: '고마워, 나의 동물 친구들아! (축제 감사 인사)',
+                reply: '릴리와 슈미트 부인, 본자이가 수아를 꼭 안아주었어요!',
+                badge: '🏆 릴리의 영원한 단짝'
+              }
+            ]
           }
         ],
         ispy: {
           image: './liliane_susewind_forest_1792557501868.jpg',
           question: 'Touch the proud orange cat, Mrs. Schmidt!',
           audioText: 'Touch the proud orange cat, Mrs. Schmidt!',
-          korean: '도도한 주황색 고양이, 슈미트 부인을 터치해 보세요!',
           hotspots: [
             { name: 'Mrs. Schmidt', top: '44%', left: '46%', width: '15%', height: '35%', correct: true, feedback: '찾았다! 슈미트 부인이 골골거리며 반가워해요!' },
             { name: 'Liliane', top: '35%', left: '60%', width: '20%', height: '45%', correct: false, feedback: '이 친구는 빨간 머리 소녀 릴리예요! 슈미트 부인을 찾아볼까요?' },
@@ -490,30 +601,117 @@
         id: 'yasuke',
         title: '요괴의 아이를 돌봐드립니다',
         subtitle: 'Yasuke\'s Little Monster Daycare',
-        image: './yasuke_yokai_nursery_1792557499411.jpg',
-        sceneTitle: '야스케와 날고 싶은 아기 텐구',
-        english: 'Baby Tengu flaps his wings: "I am hungry! Give me sweet snacks!"',
-        korean: '아기 텐구가 날개를 퍼덕여요: "배고파요! 달콤한 간식을 줘요!"',
-        keyWords: ['hungry (배고픈)', 'wings (날개)', 'sweet snacks (달콤한 간식)'],
-        choices: [
+        scenes: [
           {
-            text: '"Here is a sweet apple!"',
-            subtext: '여기 달콤한 사과야! (건강한 간식 주기)',
-            reply: '아기 텐구가 "Yummy!" 하며 신나게 사과를 베어 물었어요!',
-            badge: '🍎 최고의 보모'
+            sceneTitle: '아기 텐구의 첫 간식 시간',
+            image: './yasuke_yokai_nursery_1792557499411.jpg',
+            english: 'Baby Tengu flaps his wings: "I am hungry! Give me sweet snacks!"',
+            korean: '아기 텐구가 날개를 퍼덕여요: "배고파요! 달콤한 간식을 줘요!"',
+            keyWords: ['hungry (배고픈)', 'wings (날개)', 'sweet snacks (달콤한 간식)'],
+            choices: [
+              {
+                text: 'Here is a sweet apple!',
+                subtext: '여기 달콤한 사과야! (간식 주기)',
+                reply: '아기 텐구가 "Yummy!" 하며 신나게 사과를 베어 물었어요!',
+                badge: '🍎 최고의 보모'
+              },
+              {
+                text: 'Wash your hands first!',
+                subtext: '손 먼저 씻어야지! (예절 가르치기)',
+                reply: '야스케가 감탄했어요: "수아 덕분에 아기 요괴가 손을 깨끗이 씻었어요!"',
+                badge: '🧼 바른 생활 대장'
+              }
+            ]
           },
           {
-            text: '"Wash your hands first!"',
-            subtext: '손 먼저 씻어야지! (예절 가르치기)',
-            reply: '야스케가 감탄했어요: "수아 덕분에 아기 요괴가 손을 깨끗이 씻었어요!"',
-            badge: '🧼 바른 생활 대장'
+            sceneTitle: '신나는 비누거품 목욕 놀이',
+            image: './yasuke_scene2_bath.jpg',
+            english: 'The water yokai splash happily: "The warm bath is so bubbly!"',
+            korean: '물방울 요괴들이 첨벙거려요: "따뜻한 목욕물이 보글보글 거품 가득해요!"',
+            keyWords: ['warm bath (따뜻한 목욕)', 'bubbles (거품)', 'splash (첨벙거리다)'],
+            choices: [
+              {
+                text: 'Splash splash! Bath time is fun!',
+                subtext: '첨벙첨벙! 목욕 시간은 신나! (목욕 즐기기)',
+                reply: '무지개 비누방울이 방 안 가득 퐁퐁 솟아올랐어요!',
+                badge: '🛁 버블버블 마법사'
+              },
+              {
+                text: 'Clean your little toes softly!',
+                subtext: '작은 발가락도 부드럽게 씻자! (꼼꼼히 씻기)',
+                reply: '아기 요괴들이 간지러워 깔깔 웃으며 씻었습니다!',
+                badge: '🫧 깨끗한 꼬마요괴'
+              }
+            ]
+          },
+          {
+            sceneTitle: '아장아장 센키치의 포근한 낮잠',
+            image: './yasuke_scene3_nap.jpg',
+            english: 'Baby Senkichi rubs his big eyes: "I am sleepy... Sing a lullaby, Sua!"',
+            korean: '아기 센키치가 눈을 비벼요: "졸려요... 수아 누나 자장가 불러줘요!"',
+            keyWords: ['sleepy (졸린)', 'lullaby (자장가)', 'sweet dreams (좋은 꿈)'],
+            choices: [
+              {
+                text: 'Close your eyes and sleep well!',
+                subtext: '눈을 감고 푹 자렴! (다정하게 이불 덮어주기)',
+                reply: '센키치가 색색 숨을 쉬며 예쁜 꿈나라로 떠났어요!',
+                badge: '🌙 달콤한 자장가'
+              },
+              {
+                text: 'I will sing a sweet lullaby!',
+                subtext: '달콤한 자장가를 불러줄게! (노래 불러주기)',
+                reply: '반딧불이들이 춤추며 방 안을 은은하게 비추어주었습니다!',
+                badge: '✨ 밤하늘의 평화'
+              }
+            ]
+          },
+          {
+            sceneTitle: '다다미방 숨바꼭질 대소동',
+            image: './yasuke_scene4_hide.jpg',
+            english: 'Little yokai giggle behind the screen: "Where are we? Can you find us?"',
+            korean: '꼬마 요괴들이 미닫이문 뒤에서 낄낄거려요: "우리 어디 있게? 찾아볼래?"',
+            keyWords: ['giggle (낄낄거리다)', 'hide and seek (숨바꼭질)', 'find (찾다)'],
+            choices: [
+              {
+                text: 'I can see your fluffy tail!',
+                subtext: '네 복슬복슬한 꼬리가 보여! (장난치기)',
+                reply: '아기 여우 요괴가 깜짝 놀라며 까르르 웃음을 터뜨렸어요!',
+                badge: '🦊 명탐정 보모'
+              },
+              {
+                text: 'Ready or not, here I come!',
+                subtext: '꼭꼭 숨어라, 머리카락 보인다! (술래 외치기)',
+                reply: '야스케와 요괴들이 모두 나와 손뼉을 치며 즐거워했습니다!',
+                badge: '🎯 숨바꼭질 왕'
+              }
+            ]
+          },
+          {
+            sceneTitle: '달밤 정원의 별빛 등불 축제',
+            image: './yasuke_scene5_garden.jpg',
+            english: 'All baby yokai smile under lanterns: "Thank you for loving us, Sua!"',
+            korean: '아기 요괴들이 등불 아래 모여 웃어요: "우리를 사랑해 줘서 고마워요, 수아야!"',
+            keyWords: ['lanterns (등불)', 'thank you (고마워요)', 'love (사랑하다)'],
+            choices: [
+              {
+                text: 'You are my wonderful friends!',
+                subtext: '너희는 나의 멋진 친구들이야! (우정 표현하기)',
+                reply: '하늘 높이 풍등이 오르며 요괴 숲 전체가 축제로 물들었습니다!',
+                badge: '🏮 요괴 보육원 마스터'
+              },
+              {
+                text: 'See you tomorrow, sweet babies!',
+                subtext: '내일 또 만나자, 귀여운 아기들아! (다정한 작별 인사)',
+                reply: '야스케가 수아에게 "언제든 또 놀러 와요!" 하며 깊이 감사했습니다!',
+                badge: '🏆 최고의 요괴 엄마'
+              }
+            ]
           }
         ],
         ispy: {
           image: './yasuke_yokai_nursery_1792557499411.jpg',
           question: 'Find the sweet red apple baby Tengu is holding!',
           audioText: 'Find the sweet red apple baby Tengu is holding!',
-          korean: '아기 텐구가 손에 쥐고 있는 달콤한 빨간 사과를 터치하세요!',
           hotspots: [
             { name: 'Red Apple', top: '60%', left: '49%', width: '9%', height: '11%', correct: true, feedback: '빙고! 아삭아삭 맛있는 빨간 사과를 찾았어요!' },
             { name: 'Fire Sprite', top: '35%', left: '26%', width: '13%', height: '22%', correct: false, feedback: '정원에 떠 있는 귀여운 불도깨비예요! 아기 텐구의 손을 보세요!' },
@@ -525,30 +723,117 @@
         id: 'catwolf',
         title: '고양이 늑대의 전설',
         subtitle: 'The Tale of the Brave Cat-Wolf',
-        image: './cat_wolf_storybook_1792557502059.jpg',
-        sceneTitle: '달빛 숲을 수호하는 캣울프',
-        english: 'Cat-Wolf howls at the moon: "The forest is dark! Follow my green eyes!"',
-        korean: '캣울프가 달을 향해 울어요: "숲이 어두워! 나의 초록빛 눈을 따라와!"',
-        keyWords: ['dark forest (어두운 숲)', 'howl (울부짖다)', 'green eyes (초록빛 눈)'],
-        choices: [
+        scenes: [
           {
-            text: '"Run fast, Cat-Wolf!"',
-            subtext: '빨리 달려, 캣울프야! (신나게 달리기)',
-            reply: '캣울프가 꼬리를 휘날리며 바람처럼 빠르게 앞장섭니다!',
-            badge: '⚡ 달빛 질주'
+            sceneTitle: '달빛 바위 위의 캣울프',
+            image: './cat_wolf_storybook_1792557502059.jpg',
+            english: 'Cat-Wolf howls at the moon: "The forest is dark! Follow my green eyes!"',
+            korean: '캣울프가 달을 향해 울어요: "숲이 어두워! 나의 초록빛 눈을 따라와!"',
+            keyWords: ['dark forest (어두운 숲)', 'howl (울부짖다)', 'green eyes (초록빛 눈)'],
+            choices: [
+              {
+                text: 'Run fast, Cat-Wolf!',
+                subtext: '빨리 달려, 캣울프야! (신나게 달리기)',
+                reply: '캣울프가 꼬리를 휘날리며 바람처럼 빠르게 앞장섭니다!',
+                badge: '⚡ 달빛 질주'
+              },
+              {
+                text: 'I am not afraid with you!',
+                subtext: '너와 함께라면 무섭지 않아! (용기 내기)',
+                reply: '캣울프가 고양이처럼 골골거리며 수아의 곁을 든든하게 지켜줍니다!',
+                badge: '💖 숲의 수호자'
+              }
+            ]
           },
           {
-            text: '"I am not afraid with you!"',
-            subtext: '너와 함께라면 무섭지 않아! (용기 내기)',
-            reply: '캣울프가 고양이처럼 골골거리며 수아의 곁을 든든하게 지켜줍니다!',
-            badge: '💖 숲의 수호자'
+            sceneTitle: '날개를 펼치고 밤하늘을 날다',
+            image: './cat_wolf_wings.jpg',
+            english: 'Cat-Wolf spreads glowing wings: "Hop on my back, Sua! Let us fly!"',
+            korean: '캣울프가 빛나는 날개를 펼쳐요: "내 등에 타, 수아야! 하늘을 날자!"',
+            keyWords: ['wings (날개)', 'fly high (높이 날다)', 'stars (별들)'],
+            choices: [
+              {
+                text: 'Fly higher to the stars!',
+                subtext: '저 별들을 향해 더 높이 날자! (비행 주문 외치기)',
+                reply: '보름달 바로 앞까지 날아올라 별빛 바람을 가릅니다!',
+                badge: '🪽 은빛 비행사'
+              },
+              {
+                text: 'The night sky is so beautiful!',
+                subtext: '밤하늘이 정말 눈부시게 아름다워! (감탄하기)',
+                reply: '캣울프가 날개 짓을 펄럭이며 밤하늘에 반짝이는 궤적을 그렸어요!',
+                badge: '🌌 별빛 수호자'
+              }
+            ]
+          },
+          {
+            sceneTitle: '반짝이는 크리스탈 동굴 탐험',
+            image: './catwolf_scene3_crystal.jpg',
+            english: 'Glowing crystals light up the cave: "Touch the blue crystal of courage!"',
+            korean: '동굴 속 빛나는 크리스탈들이 반짝여요: "용기의 푸른 보석을 만져봐!"',
+            keyWords: ['crystals (수정/보석)', 'courage (용기)', 'cave (동굴)'],
+            choices: [
+              {
+                text: 'Give us bright light, magic crystal!',
+                subtext: '마법의 수정아, 우리에게 밝은 빛을 줘! (주문 외우기)',
+                reply: '동굴 안이 영롱한 푸른빛과 보랏빛으로 환하게 물들었어요!',
+                badge: '💎 크리스탈 마스터'
+              },
+              {
+                text: 'Our courage will shine forever!',
+                subtext: '우리의 용기는 영원히 빛날 거야! (결의 다지기)',
+                reply: '캣울프의 이마에 크리스탈의 축복 문양이 깃들었습니다!',
+                badge: '🔮 빛의 용사'
+              }
+            ]
+          },
+          {
+            sceneTitle: '포근한 아기 캣울프 구출 대작전',
+            image: './catwolf_scene4_kitten.jpg',
+            english: 'A tiny baby Cat-Wolf purrs softly: "I am safe in this warm hollow tree!"',
+            korean: '작은 아기 캣울프가 조용히 골골거려요: "이 포근한 나무 안에서 안전해요!"',
+            keyWords: ['tiny baby (작은 아기)', 'safe (안전한)', 'warm heart (따뜻한 마음)'],
+            choices: [
+              {
+                text: 'You are safe in our arms!',
+                subtext: '우리 품 안에서 안전하단다! (따뜻하게 안아주기)',
+                reply: '아기 캣울프가 수아의 손가락을 작은 앞발로 꼭 쥐었어요!',
+                badge: '🍼 포근한 안식처'
+              },
+              {
+                text: 'Drink some fresh milk, little one!',
+                subtext: '신선한 우유를 마시렴, 꼬마야! (돌봐주기)',
+                reply: '어른 캣울프가 흐뭇한 표정으로 수아의 볼을 핥아주었습니다!',
+                badge: '🐾 캣울프 가족'
+              }
+            ]
+          },
+          {
+            sceneTitle: '달빛 아래 숲의 수호자 대관식',
+            image: './catwolf_scene5_guardian.jpg',
+            english: 'The moon shines bright: "Sua and Cat-Wolf, you are the true guardians of the wild!"',
+            korean: '달빛이 환하게 비춰요: "수아와 캣울프, 너희가 바로 숲의 진정한 수호자들이다!"',
+            keyWords: ['guardians (수호자들)', 'true friends (진정한 친구)', 'wild forest (야생의 숲)'],
+            choices: [
+              {
+                text: 'We will protect all animals together!',
+                subtext: '우리가 함께 모든 동물을 지킬게요! (수호 선서하기)',
+                reply: '숲의 모든 동물들이 환호하며 달을 향해 함께 노래했습니다!',
+                badge: '👑 숲의 최고 수호자'
+              },
+              {
+                text: 'Forever friends under the moon!',
+                subtext: '달빛 아래 영원한 친구! (우정 맹세)',
+                reply: '캣울프가 늠름하게 포효하며 수아와의 영원한 우정을 약속했습니다!',
+                badge: '🏆 캣울프 레전드 마스터'
+              }
+            ]
           }
         ],
         ispy: {
           image: './cat_wolf_storybook_1792557502059.jpg',
           question: 'Touch the big shining full moon in the dark sky!',
           audioText: 'Touch the big shining full moon in the dark sky!',
-          korean: '밤하늘에 환하게 뜬 크고 둥근 보름달을 터치해 보세요!',
           hotspots: [
             { name: 'Full Moon', top: '7%', left: '33%', width: '23%', height: '30%', correct: true, feedback: '멋져요! 숲을 환하게 비추는 보름달을 찾았어요!' },
             { name: 'Cat-Wolf', top: '13%', left: '44%', width: '30%', height: '70%', correct: false, feedback: '멋진 캣울프예요! 캣울프 머리 뒤 하늘의 달을 터치해보세요!' }
@@ -559,30 +844,117 @@
         id: 'hwansang',
         title: '환상 해결사',
         subtitle: 'The Mystery of the Fantasy Resolvers',
-        image: './hwansang_solvers_1792557503000.jpg',
-        sceneTitle: '반도깨비 겨울과 늑대인간 유리',
-        english: 'Yuri whispers: "Look at the strange blue light! Is it a Dokkaebi fire?"',
-        korean: '유리가 속삭여요: "저 이상한 푸른 빛을 봐! 도깨비불일까?"',
-        keyWords: ['blue fire (푸른 불꽃)', 'secret (비밀)', 'whisper (속삭이다)', 'werewolf (늑대인간)'],
-        choices: [
+        scenes: [
           {
-            text: '"Let\'s investigate together!"',
-            subtext: '함께 조사하러 가자! (용감하게 사건 추리하기)',
-            reply: '겨울이가 도깨비불을 밝히며 "좋았어! 환상 해결사 출동이야!" 하고 외쳤어요!',
-            badge: '🔍 일등 환상 해결사'
+            sceneTitle: '반도깨비 겨울과 늑대인간 유리',
+            image: './hwansang_solvers_1792557503000.jpg',
+            english: 'Yuri whispers: "Look at the strange blue light! Is it a Dokkaebi fire?"',
+            korean: '유리가 속삭여요: "저 이상한 푸른 빛을 봐! 도깨비불일까?"',
+            keyWords: ['blue fire (푸른 불꽃)', 'secret (비밀)', 'whisper (속삭이다)', 'werewolf (늑대인간)'],
+            choices: [
+              {
+                text: 'Let\'s investigate together!',
+                subtext: '함께 조사하러 가자! (용감하게 사건 추리하기)',
+                reply: '겨울이가 도깨비불을 밝히며 "좋았어! 환상 해결사 출동이야!" 하고 외쳤어요!',
+                badge: '🔍 일등 환상 해결사'
+              },
+              {
+                text: 'Yuri, use your wolf senses!',
+                subtext: '유리야, 늑대의 감각을 써봐! (유리의 늑대 귀 쫑긋)',
+                reply: '유리가 늑대 귀를 쫑긋거리며 "쉿, 비밀 골목에서 소리가 들려!" 하고 앞장섰어요!',
+                badge: '🐺 늑대의 감각'
+              }
+            ]
           },
           {
-            text: '"Yuri, use your wolf senses!"',
-            subtext: '유리야, 늑대의 감각을 써봐! (유리의 늑대 귀 쫑긋)',
-            reply: '유리가 늑대 귀를 쫑긋거리며 "쉿, 비밀 골목에서 소리가 들려!" 하고 앞장섰어요!',
-            badge: '🐺 늑대의 감각'
+            sceneTitle: '달빛서점 앞 수상한 푸른 발자국',
+            image: './hwansang_solvers_1792557503000.jpg',
+            english: 'Gyeoul points at the stones: "Look! Glowing footprints lead to the secret alley!"',
+            korean: '겨울이가 돌계단을 가리켜요: "저기 봐! 빛나는 발자국이 비밀 골목으로 이어져 있어!"',
+            keyWords: ['footprints (발자국)', 'secret alley (비밀 골목)', 'lead to (이어지다)'],
+            choices: [
+              {
+                text: 'Follow the footprints quietly!',
+                subtext: '발자국을 조용히 따라가자! (살금살금 추적)',
+                reply: '발자국 끝에서 신비로운 마법 상자가 모습을 드러냈어요!',
+                badge: '👣 발자국 추적자'
+              },
+              {
+                text: 'Watch out for shadows!',
+                subtext: '그림자를 조심해! (주변 경계하기)',
+                reply: '유리가 늑대의 날렵함으로 수아를 안전하게 지켜주었습니다!',
+                badge: '🛡️ 든든한 경계태세'
+              }
+            ]
+          },
+          {
+            sceneTitle: '늑대인간 유리의 신비한 초감각',
+            image: './hwansang_solvers_1792557503000.jpg',
+            english: 'Yuri tilts his head: "I smell sweet candy and old magic dust in the wind!"',
+            korean: '유리가 고개를 갸웃거려요: "바람 속에서 달콤한 사탕과 오래된 마법 가루 냄새가 나!"',
+            keyWords: ['smell (냄새 맡다)', 'magic dust (마법 가루)', 'wind (바람)'],
+            choices: [
+              {
+                text: 'Trust your sharp ears and nose, Yuri!',
+                subtext: '유리야, 너의 밝은 귀와 코를 믿어! (신뢰 보내기)',
+                reply: '유리가 환하게 웃으며 "좋아, 범인이 저기 벽장 뒤에 숨어있어!" 하고 외쳤어요!',
+                badge: '🦊 초감각 내비게이션'
+              },
+              {
+                text: 'Which way should we go?',
+                subtext: '어느 쪽으로 가야 할까? (방향 묻기)',
+                reply: '은빛 바람이 솔솔 불며 올바른 문으로 길을 안내해 주었습니다!',
+                badge: '🧭 바람의 나침반'
+              }
+            ]
+          },
+          {
+            sceneTitle: '겨울이의 도깨비 방망이 마법 방패',
+            image: './hwansang_scene4_shield.jpg',
+            english: 'Gyeoul swings her mini Dokkaebi bat: "Magic barrier, shield our friends from danger!"',
+            korean: '겨울이가 미니 도깨비 방망이를 휘둘러요: "마법 방패야, 위험으로부터 우리 친구들을 지켜라!"',
+            keyWords: ['magic barrier (마법 방패)', 'swing (휘두르다)', 'shield (보호하다)'],
+            choices: [
+              {
+                text: 'Shield of light, turn on now!',
+                subtext: '빛의 방패야, 지금 켜져라! (방패 주문 외치기)',
+                reply: '반짝이는 황금빛 돔이 펼쳐지며 어둠의 안개를 깨끗하게 몰아냈습니다!',
+                badge: '⚡ 도깨비 방패술사'
+              },
+              {
+                text: 'We are brave and strong!',
+                subtext: '우리는 용감하고 강해! (용기 충전하기)',
+                reply: '도깨비불이 세 배로 커지며 따뜻하고 든든한 힘을 주었어요!',
+                badge: '🔥 불타는 도깨비 힘'
+              }
+            ]
+          },
+          {
+            sceneTitle: '기쁨 인형의 정화와 환상 사건 해결',
+            image: './hwansang_scene4_shield.jpg',
+            english: 'The little phantom doll smiles: "Thank you, Fantasy Resolvers! Peace is restored!"',
+            korean: '꼬마 요괴 인형이 미소 지어요: "고마워요, 환상 해결사! 다시 평화가 찾아왔어요!"',
+            keyWords: ['peace (평화)', 'restored (회복된)', 'mission complete (미션 완료)'],
+            choices: [
+              {
+                text: 'Mission complete! We did it together!',
+                subtext: '임무 완료! 우리가 함께 해냈어! (승리의 하이파이브)',
+                reply: '겨울이와 유리가 수아와 기쁘게 손을 마주치며 환호했습니다!',
+                badge: '🏆 전설의 환상 해결사'
+              },
+              {
+                text: 'Every mystery is solved today!',
+                subtext: '오늘의 모든 수수께끼를 해결했어! (뿌듯한 마무리)',
+                reply: '마을에 밝은 아침 햇살이 비추며 평화로운 하루가 시작되었습니다!',
+                badge: '🌟 도시의 수호천사'
+              }
+            ]
           }
         ],
         ispy: {
           image: './hwansang_solvers_1792557503000.jpg',
           question: 'Touch the smiling blue Dokkaebi fire in Gyeoul\'s hand!',
           audioText: 'Touch the smiling blue Dokkaebi fire in Gyeoul\'s hand!',
-          korean: '겨울이의 손 위에 떠 있는 귀여운 푸른 도깨비불을 터치하세요!',
           hotspots: [
             { name: 'Blue Fire', top: '34%', left: '31%', width: '10%', height: '17%', correct: true, feedback: '찾았다! 따뜻하게 빛나는 귀여운 도깨비불이에요!' },
             { name: 'Yuri', top: '13%', left: '55%', width: '25%', height: '75%', correct: false, feedback: '신비로운 늑대인간 소년 유리예요! 겨울이의 손 위를 찾아보세요!' },
@@ -593,13 +965,41 @@
     };
 
     let currentThemeKey = 'lily';
+    let currentSceneIndex = 0;
     let currentActivity = 'story';
+    let activeTargetChoice = null;
     let currentBlocks = { who: 'Cat-Wolf', where: 'under the silver moon', action: 'eating sweet apple pie' };
+    let suaCollectedCards = [];
+    let isRecognizing = false;
+    let speechRecognitionInstance = null;
+
+    // TTS Voice synthesis
+    function speak(txt) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(txt);
+        u.lang = 'en-US';
+        u.rate = 0.85;
+        u.pitch = 1.1;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    function playCurrentAudio() {
+      const curScene = themes[currentThemeKey].scenes[currentSceneIndex];
+      speak(curScene.english);
+    }
+
+    function toggleTranslation() {
+      const ko = document.getElementById('koreanText');
+      ko.style.display = ko.style.display === 'none' ? 'block' : 'none';
+    }
 
     function switchTheme(themeKey) {
       currentThemeKey = themeKey;
+      currentSceneIndex = 0;
+      activeTargetChoice = null;
 
-      // Update Theme Button Active States
       ['lily', 'yasuke', 'catwolf', 'hwansang'].forEach(key => {
         const btn = document.getElementById(`btn-${key}`);
         if (!btn) return;
@@ -616,55 +1016,254 @@
         }
       });
 
-      renderCurrentTheme();
+      renderCurrentScene();
       saveUserData();
     }
 
-    function renderCurrentTheme() {
-      const data = themes[currentThemeKey];
+    function goToScene(idx) {
+      currentSceneIndex = idx;
+      activeTargetChoice = null;
+      renderCurrentScene();
+    }
 
-      // Story Activity Render
-      document.getElementById('storyMainImage').src = data.image;
-      document.getElementById('storySceneTitle').innerText = data.sceneTitle;
-      document.getElementById('englishText').innerText = data.english;
-      document.getElementById('koreanText').innerText = data.korean;
+    function renderCurrentScene() {
+      const themeData = themes[currentThemeKey];
+      const curScene = themeData.scenes[currentSceneIndex];
 
-      // Keywords Render
+      // Update Scene Badge & Dots
+      document.getElementById('sceneBadge').innerText = `Scene ${currentSceneIndex + 1} / 5`;
+      document.getElementById('storySceneTag').innerText = `Scene ${currentSceneIndex + 1} / 5`;
+      document.getElementById('storySceneTitle').innerText = curScene.sceneTitle;
+      document.getElementById('storyMainImage').src = curScene.image;
+      document.getElementById('englishText').innerText = curScene.english;
+      document.getElementById('koreanText').innerText = curScene.korean;
+
+      // Update 5 Dots
+      const dotsContainer = document.getElementById('sceneDots');
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const dot = document.createElement('button');
+        dot.onclick = () => goToScene(i);
+        dot.className = `w-8 h-8 rounded-full text-xs font-bold transition flex items-center justify-center ${
+          i === currentSceneIndex
+            ? 'bg-purple-600 text-white shadow-md scale-105'
+            : (i < currentSceneIndex ? 'bg-emerald-500 text-white' : 'bg-[var(--card)] border border-[var(--border)] text-[var(--muted-foreground)]')
+        }`;
+        dot.innerText = i + 1;
+        dotsContainer.appendChild(dot);
+      }
+
+      // Render Keywords
       const kwBox = document.getElementById('keyWordsContainer');
       kwBox.innerHTML = '<span class="text-xs font-bold text-[var(--muted-foreground)]">오늘의 핵심 쏙쏙 단어:</span>';
-      data.keyWords.forEach(kw => {
+      curScene.keyWords.forEach(kw => {
         const span = document.createElement('span');
         span.className = 'text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200 font-semibold';
         span.innerText = kw;
         kwBox.appendChild(span);
       });
 
-      // Choices Render
+      // Render Speech-First Choices
       const choicesBox = document.getElementById('choiceOptions');
       choicesBox.innerHTML = '';
-      data.choices.forEach((c, idx) => {
+      curScene.choices.forEach((c, idx) => {
         const btn = document.createElement('button');
-        btn.className = 'text-left p-4 rounded-xl border border-[var(--border)] bg-[var(--sidebar)] hover:border-emerald-500 hover:bg-emerald-50/30 transition flex flex-col justify-between group';
-        btn.onclick = () => selectChoice(c);
+        btn.id = `choice-btn-${idx}`;
+        btn.className = 'choice-item text-left p-4 rounded-xl border border-[var(--border)] bg-[var(--sidebar)] hover:border-purple-400 hover:bg-purple-50/20 transition flex flex-col justify-between group';
+        btn.onclick = () => listenAndPrepareSpeech(c, idx);
         btn.innerHTML = `
           <div class="flex items-center justify-between w-full">
-            <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">선택 ${idx + 1}</span>
-            <span class="text-xs text-muted-foreground group-hover:text-emerald-600 transition">선택하기 👆</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">선택 ${idx + 1}</span>
+            <span class="text-xs font-bold text-purple-600 group-hover:scale-110 transition flex items-center gap-1">
+              <span>🔊</span> 클릭해서 듣기
+            </span>
           </div>
-          <p class="font-bold text-sm text-[var(--foreground)] mt-2">${c.text}</p>
+          <p class="font-bold text-sm text-[var(--foreground)] mt-2">"${c.text}"</p>
           <p class="text-xs text-[var(--muted-foreground)] mt-1">${c.subtext}</p>
+          <div class="mt-2 text-[11px] font-semibold text-purple-600 flex items-center gap-1">
+            <span>🎙️</span> 들은 후 마이크로 말해 선택
+          </div>
         `;
         choicesBox.appendChild(btn);
       });
 
-      // Reset feedback
+      // Reset speech goal and banners
+      activeTargetChoice = null;
+      document.getElementById('speechGoalText').innerText = '"위의 선택지 버튼을 눌러 발음을 먼저 들어보세요!"';
+      document.getElementById('speechLiveTranscript').innerText = '발음을 들은 뒤 마이크를 누르면 수아의 목소리를 듣습니다.';
       document.getElementById('feedbackBanner').classList.add('hidden');
-      document.getElementById('nextBtn').classList.add('hidden');
+      document.getElementById('helperPassBtn').classList.add('hidden');
 
-      // I-Spy Activity Render
+      // I-Spy Render
       renderIspy();
     }
 
+    // Step 1: Listen to sentence and select target to speak
+    function listenAndPrepareSpeech(choice, idx) {
+      activeTargetChoice = choice;
+      speak(choice.text);
+
+      // Highlight selected button
+      const allBtns = document.querySelectorAll('.choice-item');
+      allBtns.forEach((b, i) => {
+        if (i === idx) {
+          b.classList.add('choice-selected');
+        } else {
+          b.classList.remove('choice-selected');
+        }
+      });
+
+      // Update Speech Goal Box
+      document.getElementById('speechGoalLabel').innerText = `🎯 목표 문장 (선택 ${idx + 1})`;
+      document.getElementById('speechGoalText').innerText = `"${choice.text}"`;
+      document.getElementById('speechLiveTranscript').innerText = '🔊 발음을 잘 들었나요? 이제 마이크를 누르고 큰 소리로 따라 말해보세요!';
+      document.getElementById('helperPassBtn').classList.remove('hidden');
+
+      // Auto scroll to speech box for smooth mobile UX
+      document.getElementById('speechActionBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Step 2: Speech Recognition (Web Speech API)
+    function startVoiceRecognition() {
+      if (!activeTargetChoice) {
+        alert("먼저 위에서 말하고 싶은 문장 버튼을 클릭해서 발음을 들어보세요!");
+        return;
+      }
+
+      const micBtn = document.getElementById('micBtn');
+      const liveText = document.getElementById('speechLiveTranscript');
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) {
+        // Fallback for browsers without speech recognition support
+        simulateKidSpeaking();
+        return;
+      }
+
+      try {
+        if (speechRecognitionInstance) {
+          speechRecognitionInstance.abort();
+        }
+
+        const recognition = new SpeechRecognition();
+        speechRecognitionInstance = recognition;
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = true;
+
+        recognition.onstart = () => {
+          isRecognizing = true;
+          micBtn.classList.add('bg-red-600', 'scale-110');
+          liveText.innerText = '🔴 수아의 목소리를 귀담아듣고 있어요... 말씀해 보세요!';
+        };
+
+        recognition.onresult = (event) => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            transcript += event.results[i][0].transcript;
+          }
+          liveText.innerText = `수아의 말: "${transcript}"`;
+
+          if (event.results[0].isFinal) {
+            evaluatePronunciation(transcript);
+          }
+        };
+
+        recognition.onerror = (event) => {
+          console.warn('Speech recognition error:', event.error);
+          micBtn.classList.remove('bg-red-600', 'scale-110');
+          liveText.innerText = '마이크 인식이 원활하지 않아요. 아래 [씩씩하게 말했어요!] 버튼을 눌러 통과할 수 있어요!';
+          document.getElementById('helperPassBtn').classList.remove('hidden');
+        };
+
+        recognition.onend = () => {
+          isRecognizing = false;
+          micBtn.classList.remove('bg-red-600', 'scale-110');
+        };
+
+        recognition.start();
+      } catch (err) {
+        console.warn('Speech recognition init error:', err);
+        simulateKidSpeaking();
+      }
+    }
+
+    // Kid-Friendly Pronunciation & Keyword Evaluator
+    function evaluatePronunciation(spoken) {
+      if (!activeTargetChoice) return;
+
+      const targetWords = activeTargetChoice.text.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(Boolean);
+      const spokenWords = spoken.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(Boolean);
+
+      let matchedCount = 0;
+      targetWords.forEach(w => {
+        if (spokenWords.some(sw => sw.includes(w) || w.includes(sw))) {
+          matchedCount++;
+        }
+      });
+
+      const matchRatio = targetWords.length > 0 ? (matchedCount / targetWords.length) : 1;
+
+      // Generous kid threshold (30% or 1 key word)
+      if (matchRatio >= 0.3 || spokenWords.length >= 2) {
+        confirmSpeechSuccess();
+      } else {
+        speak("Nice try! Let's speak one more time louder!");
+        document.getElementById('speechLiveTranscript').innerText = '💡 아쉬워요! 조금 더 크고 또박또박하게 다시 말해볼까요?';
+        document.getElementById('helperPassBtn').classList.remove('hidden');
+      }
+    }
+
+    function simulateKidSpeaking() {
+      const micBtn = document.getElementById('micBtn');
+      const liveText = document.getElementById('speechLiveTranscript');
+
+      micBtn.classList.add('bg-red-600', 'scale-110');
+      liveText.innerText = '🔴 수아의 목소리를 듣는 중...';
+
+      setTimeout(() => {
+        micBtn.classList.remove('bg-red-600', 'scale-110');
+        liveText.innerText = `수아의 말: "${activeTargetChoice.text}"`;
+        confirmSpeechSuccess();
+      }, 1500);
+    }
+
+    function passSpeakingStep() {
+      if (!activeTargetChoice) {
+        activeTargetChoice = themes[currentThemeKey].scenes[currentSceneIndex].choices[0];
+      }
+      confirmSpeechSuccess();
+    }
+
+    function confirmSpeechSuccess() {
+      speak("Excellent speaking, Sua! Perfect!");
+
+      const fb = document.getElementById('feedbackBanner');
+      fb.classList.remove('hidden');
+      document.getElementById('feedbackTitle').innerText = `🎉 스피킹 성공! 칭호 획득: [${activeTargetChoice.badge}]`;
+      document.getElementById('feedbackDesc').innerText = activeTargetChoice.reply;
+
+      // Update badge score
+      document.getElementById('badgeScore').innerText = `${suaCollectedCards.length + currentSceneIndex + 4}개 🏆`;
+      saveUserData();
+
+      fb.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function advanceNextScene() {
+      if (currentSceneIndex < 4) {
+        currentSceneIndex++;
+        renderCurrentScene();
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+      } else {
+        speak("Congratulations Sua! You finished all five scenes!");
+        alert(`🎉 축하합니다! ${themes[currentThemeKey].title}의 5개 에피소드를 모두 멋진 영어로 완수했습니다!\n수아의 모험 앨범에 [마스터 모험가] 뱃지가 수여되었습니다.`);
+        document.getElementById('adventurerLevel').innerText = "Lv.5 마스터 모험가";
+      }
+    }
+
+    // I-Spy Activity
     function renderIspy() {
       const ispy = themes[currentThemeKey].ispy;
       document.getElementById('ispyImage').src = ispy.image;
@@ -707,6 +1306,7 @@
       document.getElementById('ispyToast').classList.add('hidden');
     }
 
+    // Activity Tabs
     function switchActivity(actId) {
       currentActivity = actId;
       const panels = ['story', 'ispy', 'maker', 'quiz'];
@@ -724,63 +1324,12 @@
       });
     }
 
-    // TTS Voice synthesis
-    function speak(txt) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(txt);
-        u.lang = 'en-US';
-        u.rate = 0.85;
-        u.pitch = 1.1;
-        window.speechSynthesis.speak(u);
-      }
-    }
-
-    function playCurrentAudio() {
-      speak(themes[currentThemeKey].english);
-    }
-
-    function toggleTranslation() {
-      const ko = document.getElementById('koreanText');
-      ko.style.display = ko.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function selectChoice(c) {
-      speak(c.text);
-      const fb = document.getElementById('feedbackBanner');
-      fb.classList.remove('hidden');
-      document.getElementById('feedbackTitle').innerText = `🎉 칭호 획득: [${c.badge}]`;
-      document.getElementById('feedbackDesc').innerText = c.reply;
-      document.getElementById('nextBtn').classList.remove('hidden');
-    }
-
-    function simulateMic() {
-      const btn = document.getElementById('micBtn');
-      const t = document.getElementById('micStatusTitle');
-      const d = document.getElementById('micStatusDesc');
-
-      btn.classList.add('animate-pulse', 'scale-110', 'bg-red-500', 'text-white');
-      t.innerText = "수아의 목소리를 귀담아듣고 있어요...";
-      d.innerText = "큰 소리로 말해보세요!";
-
-      setTimeout(() => {
-        btn.classList.remove('animate-pulse', 'scale-110', 'bg-red-500', 'text-white');
-        t.innerText = "발음 최고! (Superb pronunciation!)";
-        d.innerText = "친구들이 수아의 목소리를 듣고 기뻐합니다!";
-        selectChoice(themes[currentThemeKey].choices[0]);
-      }, 2000);
-    }
-
-    function nextStoryScene() {
-      alert("✨ 에피소드 완료! 수아의 활약으로 동물 친구들이 행복해졌어요!\n이제 상단의 '그림 속 숨은 단어 찾기'나 'AI 마법 그림 공방'도 즐겨보세요!");
-    }
-
-    // Maker Block logic
+    // AI Drawing Studio Block Logic
     function pickBlock(type, val, btn) {
       currentBlocks[type] = val;
       const group = document.getElementById(`${type}Blocks`).children;
       for (let b of group) {
-        b.classList.remove('border-purple-500', 'border-blue-500', 'border-emerald-500', 'bg-purple-100', 'bg-blue-100', 'bg-emerald-100', 'font-bold');
+        b.classList.remove('border-purple-500', 'border-blue-500', 'border-emerald-500', 'bg-purple-50', 'bg-blue-50', 'bg-emerald-50', 'font-bold');
       }
       btn.classList.add('font-bold', type === 'who' ? 'border-purple-500' : (type === 'where' ? 'border-blue-500' : 'border-emerald-500'), type === 'who' ? 'bg-purple-50' : (type === 'where' ? 'bg-blue-50' : 'bg-emerald-50'));
 
@@ -792,7 +1341,6 @@
       speak(document.getElementById('makerSentence').innerText);
     }
 
-    // Dynamic Card Visual Determination based on chosen blocks
     function getCardVisual(who, where, action) {
       if (who === 'Cat-Wolf') {
         if (action.includes('flying') || where.includes('cloud')) {
@@ -843,8 +1391,6 @@
       };
     }
 
-    let suaCollectedCards = [];
-
     function renderCardsGallery() {
       const grid = document.getElementById('cardsGalleryGrid');
       const countEl = document.getElementById('savedCardCount');
@@ -893,7 +1439,6 @@
       document.getElementById('makerCardSentence').innerText = sentence;
       document.getElementById('makerCardRarity').innerText = visual.rarity;
 
-      // Add to cards collection
       suaCollectedCards.push({
         who: currentBlocks.who,
         title: visual.title,
@@ -925,7 +1470,7 @@
       }
     }
 
-    // LocalStorage State Management (No server/DB needed)
+    // LocalStorage State Management
     function loadUserData() {
       try {
         const saved = localStorage.getItem('sua_english_data');
@@ -959,7 +1504,7 @@
     // Init
     window.addEventListener('DOMContentLoaded', () => {
       loadUserData();
-      renderCurrentTheme();
+      renderCurrentScene();
     });
   </script>
 </body>
