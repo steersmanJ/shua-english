@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>수아의 책 속 영어 모험 (Sua's Book Adventure)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes bounce-gentle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.7); }
+    }
+    .animate-gentle {
+      animation: bounce-gentle 2.5s infinite ease-in-out;
+    }
+    .pulse-glow {
+      animation: pulse-glow 2s infinite;
+    }
+    .tab-active {
+      box-shadow: 0 6px 16px -2px rgba(0,0,0,0.12);
+      transform: translateY(-2px);
+    }
+    .interactive-hotspot {
+      position: absolute;
+      cursor: pointer;
+      border: 2px dashed rgba(255, 255, 255, 0.7);
+      border-radius: 9999px;
+      transition: all 0.3s;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .interactive-hotspot:hover {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(1.1);
+      border-color: #fbbf24;
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] min-h-screen p-3 md:p-6 font-sans antialiased">
+  <div class="max-w-5xl mx-auto space-y-6">
+    
+    <!-- Top Header -->
+    <header class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-3xl shadow-inner animate-gentle">
+          📖✨
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">초등 2학년 수아의 비밀 연구소</span>
+            <span class="text-xs text-[var(--muted-foreground)]">AI 생성 이미지 & 스토리 러닝</span>
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight text-[var(--foreground)] mt-0.5">수아의 책 속 영어 모험 🏰</h1>
+        </div>
+      </div>
+      
+      <!-- Stats Badges -->
+      <div class="flex items-center gap-3 bg-[var(--sidebar)] px-4 py-2 rounded-xl border border-[var(--border)]">
+        <div class="text-center">
+          <p class="text-xs text-[var(--muted-foreground)]">찾아낸 단어 보물</p>
+          <p class="text-lg font-bold text-amber-500" id="treasureScore">5개</p>
+        </div>
+        <div class="w-px h-8 bg-[var(--border)]"></div>
+        <div class="text-center">
+          <p class="text-xs text-[var(--muted-foreground)]">모은 캐릭터 뱃지</p>
+          <p class="text-lg font-bold text-emerald-600" id="badgeScore">4개</p>
+        </div>
+        <div class="w-px h-8 bg-[var(--border)]"></div>
+        <div class="text-center">
+          <p class="text-xs text-[var(--muted-foreground)]">모험가 레벨</p>
+          <p class="text-lg font-bold text-purple-600">Lv.2 숲의 친구</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Theme Selector Tabs -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base md:text-lg font-bold flex items-center gap-2">
+          <span>🌟</span> 오늘 모험할 책을 선택하세요!
+        </h2>
+        <span class="text-xs text-[var(--muted-foreground)]">책마다 고유한 AI 그림과 놀이가 준비되어 있어요</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="themeButtons">
+        <!-- Theme 1: Lily -->
+        <button onclick="switchTheme('lily')" id="btn-lily" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 tab-active">
+          <div class="flex justify-between items-start">
+            <span class="text-3xl">🐱🌿</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900">숲속 교감</span>
+          </div>
+          <div class="mt-2">
+            <h3 class="font-bold text-base text-[var(--foreground)]">동물과 말하는 아이 릴리</h3>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">고양이 슈미트 부인 & 강아지 본자이</p>
+          </div>
+        </button>
+
+        <!-- Theme 2: Yasuke & Monster -->
+        <button onclick="switchTheme('yasuke')" id="btn-yasuke" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-[var(--border)] hover:border-amber-400 bg-[var(--card)]">
+          <div class="flex justify-between items-start">
+            <span class="text-3xl">🏮🍼</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">육아 판타지</span>
+          </div>
+          <div class="mt-2">
+            <h3 class="font-bold text-base text-[var(--foreground)]">요괴의 아이를 돌봐드립니다</h3>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">야스케 & 아기 텐구·불도깨비</p>
+          </div>
+        </button>
+
+        <!-- Theme 3: Sua's Custom Cat-Wolf -->
+        <button onclick="switchTheme('catwolf')" id="btn-catwolf" class="theme-card text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between border-[var(--border)] hover:border-purple-400 bg-[var(--card)]">
+          <div class="flex justify-between items-start">
+            <span class="text-3xl">🐾🌙</span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-200 text-purple-900">수아의 창작</span>
+          </div>
+          <div class="mt-2">
+            <h3 class="font-bold text-base text-[var(--foreground)]">고양이 늑대의 전설</h3>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">달빛 숲의 신비한 크리처 캣울프</p>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Activity Mode Bar (Various Fun Activities) -->
+    <nav class="flex flex-wrap items-center gap-2 border-b border-[var(--border)] pb-2">
+      <button onclick="switchActivity('story')" id="act-story" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 transition">
+        <span>📖</span> 1. 스토리북 모험
+      </button>
+      <button onclick="switchActivity('ispy')" id="act-ispy" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--sidebar)] text-[var(--foreground)] flex items-center gap-1.5 transition">
+        <span>🔍</span> 2. 그림 속 숨은 단어 찾기 (I-Spy)
+      </button>
+      <button onclick="switchActivity('maker')" id="act-maker" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--sidebar)] text-[var(--foreground)] flex items-center gap-1.5 transition">
+        <span>🎨</span> 3. AI 마법 그림 공방
+      </button>
+      <button onclick="switchActivity('quiz')" id="act-quiz" class="activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--sidebar)] text-[var(--foreground)] flex items-center gap-1.5 transition">
+        <span>⚡</span> 4. 마법 주문 배틀
+      </button>
+    </nav>
+
+    <!-- ================= ACTIVITY 1: STORY QUEST ================= -->
+    <section id="panel-story" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-6">
+      
+      <!-- AI Illustration Display Area -->
+      <div class="relative rounded-2xl overflow-hidden border border-[var(--border)] shadow-md bg-black/5 group">
+        <img id="storyMainImage" src="./liliane_susewind_forest_1792557501868.jpg" alt="Story Illustration" class="w-full h-72 md:h-96 object-cover object-center transition duration-500 hover:scale-105">
+        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-5 text-white flex flex-col md:flex-row md:items-end justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2 py-0.5 rounded-full bg-amber-400 text-amber-950 font-bold" id="storySceneTag">Scene 1</span>
+              <span class="text-xs opacity-80" id="storySubtitle">AI 스토리 삽화</span>
+            </div>
+            <h3 class="text-xl md:text-2xl font-bold drop-shadow" id="storySceneTitle">숲속의 릴리와 슈미트 부인</h3>
+          </div>
+          <button onclick="playCurrentAudio()" class="self-start md:self-auto px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-bold text-xs flex items-center gap-1.5 border border-white/30 transition">
+            <span>🔊</span> 영어 음성 듣기 (TTS)
+          </button>
+        </div>
+      </div>
+
+      <!-- Dialogue & Learning Box -->
+      <div class="bg-[var(--sidebar)] border border-[var(--border)] rounded-xl p-5 space-y-4">
+        <div class="space-y-1">
+          <p class="text-lg md:text-xl font-bold text-[var(--foreground)] leading-relaxed" id="englishText">
+            Mrs. Schmidt says: "Look up! A tiny baby bird fell from the nest!"
+          </p>
+          <div class="flex items-center gap-3 pt-1">
+            <button onclick="toggleTranslation()" class="text-xs text-[var(--muted-foreground)] underline hover:text-[var(--foreground)]">
+              [한국어 뜻 번역 보기/숨기기]
+            </button>
+            <p class="text-sm text-[var(--muted-foreground)] font-medium" id="koreanText" style="display: none;">
+              슈미트 부인이 말해요: "저기 위를 봐! 아주 작은 아기 새가 둥지에서 떨어졌어!"
+            </p>
+          </div>
+        </div>
+
+        <!-- Keywords -->
+        <div class="pt-3 border-t border-[var(--border)] flex flex-wrap items-center gap-2" id="keyWordsContainer">
+          <span class="text-xs font-bold text-[var(--muted-foreground)]">오늘의 핵심 쏙쏙 단어:</span>
+        </div>
+      </div>
+
+      <!-- Choices & Mic Action -->
+      <div class="space-y-3">
+        <label class="text-sm font-bold text-[var(--foreground)] flex items-center justify-between">
+          <span>🗣️ 수아의 마법 선택 (영어로 말하거나 버튼을 눌러보세요!)</span>
+          <span class="text-xs text-emerald-600 font-medium">✨ 선택에 따라 이야기가 달라져요</span>
+        </label>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="choiceOptions">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Mic Emulation -->
+        <div class="bg-[var(--card)] border border-dashed border-[var(--border)] rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <button onclick="simulateMic()" id="micBtn" class="w-12 h-12 rounded-full bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center text-2xl transition shadow-sm">
+              🎙️
+            </button>
+            <div>
+              <p class="text-sm font-bold" id="micStatusTitle">마이크를 누르고 영어로 말해보기</p>
+              <p class="text-xs text-[var(--muted-foreground)]" id="micStatusDesc">"Don't worry, baby bird!" 라고 소리 내어 말해보세요!</p>
+            </div>
+          </div>
+          <button onclick="nextStoryScene()" id="nextBtn" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow transition hidden">
+            다음 이야기로 진행 ➡️
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Reaction Banner -->
+      <div id="feedbackBanner" class="hidden rounded-xl p-4 border bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 text-emerald-900 dark:text-emerald-200">
+        <div class="flex items-start gap-3">
+          <span class="text-3xl" id="feedbackEmoji">🎉</span>
+          <div>
+            <h4 class="font-bold text-sm" id="feedbackTitle">훌륭해요! 칭호 획득!</h4>
+            <p class="text-xs mt-0.5" id="feedbackDesc">캐릭터 반응</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= ACTIVITY 2: I-SPY DETECTIVE ================= -->
+    <section id="panel-ispy" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-5 hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+        <div>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">인터랙티브 탐정 게임</span>
+          <h3 class="text-xl font-bold mt-1">🔍 그림 속 영어 숨은 보물 찾기</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">질문을 듣고, AI 그림 속에서 해당하는 동물이나 물건을 직접 터치해 보세요!</p>
+        </div>
+        <div class="bg-amber-100 dark:bg-amber-950/40 border border-amber-300 px-4 py-2 rounded-xl text-center">
+          <span class="text-xs text-amber-900 dark:text-amber-200 font-bold">탐정 미션 진행도</span>
+          <p class="text-lg font-extrabold text-amber-600" id="ispyProgress">1 / 3 완료</p>
+        </div>
+      </div>
+
+      <!-- Current I-Spy Mission Prompt Box -->
+      <div class="bg-[var(--sidebar)] border border-blue-200 dark:border-blue-900 rounded-xl p-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl animate-bounce">🎯</span>
+          <div>
+            <span class="text-xs font-bold text-blue-600 dark:text-blue-400">FIND THIS:</span>
+            <p class="text-base md:text-lg font-bold text-[var(--foreground)]" id="ispyQuestionText">
+              "Touch the proud orange cat, Mrs. Schmidt!"
+            </p>
+          </div>
+        </div>
+        <button onclick="playIspyAudio()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1 shadow-sm">
+          <span>🔊</span> 듣기
+        </button>
+      </div>
+
+      <!-- Clickable Hotspot Image Area -->
+      <div class="relative rounded-2xl overflow-hidden border border-[var(--border)] select-none">
+        <img id="ispyImage" src="./liliane_susewind_forest_1792557501868.jpg" alt="I Spy Image" class="w-full h-80 md:h-[450px] object-cover object-center">
+        
+        <!-- Hotspots Container -->
+        <div id="hotspotContainer" class="absolute inset-0">
+          <!-- Dynamically populated per theme -->
+        </div>
+      </div>
+
+      <!-- Discovery Result Toast -->
+      <div id="ispyToast" class="hidden p-4 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 text-emerald-950 dark:text-emerald-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">✨</span>
+          <div>
+            <p class="font-bold text-sm" id="ispyToastTitle">정답입니다! (Bingo!)</p>
+            <p class="text-xs" id="ispyToastDesc">You found Mrs. Schmidt! She purrs happily.</p>
+          </div>
+        </div>
+        <button onclick="nextIspyMission()" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-xs">
+          다음 문제 찾기 ➡️
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= ACTIVITY 3: AI DRAWING STUDIO ================= -->
+    <section id="panel-maker" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-6 hidden">
+      <div>
+        <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold">수아의 창작 스튜디오</span>
+        <h3 class="text-xl font-bold mt-1">🎨 단어 블록으로 새 AI 그림 주문하기</h3>
+        <p class="text-xs text-[var(--muted-foreground)]">수아가 좋아하는 영어 단어 블록들을 골라 주문을 외우면 새로운 상상 그림 카드가 탄생해요!</p>
+      </div>
+
+      <!-- Block Selector UI -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Block 1: Who -->
+        <div class="bg-[var(--sidebar)] p-4 rounded-xl border border-[var(--border)] space-y-2">
+          <label class="text-xs font-bold text-purple-600 uppercase tracking-wider">1. 누가? (Who)</label>
+          <div class="space-y-1.5" id="whoBlocks">
+            <button onclick="pickBlock('who', 'Cat-Wolf', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500">
+              🐾 Cat-Wolf (고양이 늑대)
+            </button>
+            <button onclick="pickBlock('who', 'Mrs. Schmidt', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500">
+              🐱 Mrs. Schmidt (슈미트 부인)
+            </button>
+            <button onclick="pickBlock('who', 'Baby Tengu', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-purple-500">
+              👺 Baby Tengu (아기 텐구)
+            </button>
+          </div>
+        </div>
+
+        <!-- Block 2: Where -->
+        <div class="bg-[var(--sidebar)] p-4 rounded-xl border border-[var(--border)] space-y-2">
+          <label class="text-xs font-bold text-blue-600 uppercase tracking-wider">2. 어디서? (Where)</label>
+          <div class="space-y-1.5" id="whereBlocks">
+            <button onclick="pickBlock('where', 'under the silver moon', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-blue-500">
+              🌙 under the silver moon (은빛 달 아래서)
+            </button>
+            <button onclick="pickBlock('where', 'in the rainbow garden', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-blue-500">
+              🌈 in the rainbow garden (무지개 정원에서)
+            </button>
+            <button onclick="pickBlock('where', 'on a flying fluffy cloud', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-blue-500">
+              ☁️ on a flying cloud (날아가는 구름 위에서)
+            </button>
+          </div>
+        </div>
+
+        <!-- Block 3: Action -->
+        <div class="bg-[var(--sidebar)] p-4 rounded-xl border border-[var(--border)] space-y-2">
+          <label class="text-xs font-bold text-emerald-600 uppercase tracking-wider">3. 무엇을 해? (Action)</label>
+          <div class="space-y-1.5" id="actionBlocks">
+            <button onclick="pickBlock('action', 'eating sweet apple pie', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500">
+              🥧 eating sweet apple pie (달콤한 파이 먹기)
+            </button>
+            <button onclick="pickBlock('action', 'wearing a shiny gold crown', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500">
+              👑 wearing a shiny gold crown (금관 쓰기)
+            </button>
+            <button onclick="pickBlock('action', 'flying high with wings', this)" class="block-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500">
+              🪽 flying high with wings (날개로 높이 날기)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Generated Sentence & Magic Spell Button -->
+      <div class="bg-[var(--sidebar)] border-2 border-dashed border-purple-300 dark:border-purple-800 rounded-xl p-5 space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-purple-700 dark:text-purple-300">완성된 수아의 영어 주문 문장:</span>
+          <button onclick="speakMakerSpell()" class="text-xs text-purple-600 underline font-semibold">🔊 주문 미리 듣기</button>
+        </div>
+        <p class="text-lg md:text-xl font-extrabold text-[var(--foreground)]" id="makerSentence">
+          "Cat-Wolf is under the silver moon eating sweet apple pie!"
+        </p>
+
+        <button onclick="generateCustomCard()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-bold text-base shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+          <span>✨</span> AI 마법 그림 소환하기! (Generate Image Card)
+        </button>
+      </div>
+
+      <!-- Result Card Modal/Preview -->
+      <div id="makerResultCard" class="hidden rounded-2xl border border-purple-200 bg-purple-50/50 dark:bg-purple-950/20 p-5 flex flex-col md:flex-row items-center gap-5">
+        <img id="makerResultImg" src="./cat_wolf_storybook_1792557502059.jpg" class="w-48 h-48 rounded-xl object-cover shadow-md border-2 border-white">
+        <div class="space-y-2 text-center md:text-left">
+          <span class="px-2.5 py-0.5 rounded-full bg-purple-200 text-purple-900 text-xs font-bold">수아의 창작 갤러리 등록 완료!</span>
+          <h4 class="text-lg font-bold text-[var(--foreground)]" id="makerCardTitle">은빛 달밤의 캣울프와 애플파이</h4>
+          <p class="text-xs text-[var(--muted-foreground)]">"수아가 만든 문장대로 멋진 마법 그림 카드가 앨범에 저장되었습니다!"</p>
+          <div class="pt-2">
+            <span class="text-xs px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-semibold">🏆 창작 마법사 뱃지 획득!</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= ACTIVITY 4: MAGIC WORD BATTLE ================= -->
+    <section id="panel-quiz" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm space-y-6 hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">스피드 퀴즈 배틀</span>
+          <h3 class="text-xl font-bold mt-1">⚡ 동물 & 요괴 마법 주문 퀴즈</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">문제를 맞히면 캐릭터의 우정 마법 게이지가 100% 충전돼요!</p>
+        </div>
+        <div class="w-32 bg-[var(--sidebar)] rounded-full h-4 border border-[var(--border)] overflow-hidden">
+          <div class="bg-gradient-to-r from-amber-400 to-emerald-500 h-full transition-all duration-500" id="magicGauge" style="width: 40%;"></div>
+        </div>
+      </div>
+
+      <div class="bg-[var(--sidebar)] border border-[var(--border)] rounded-xl p-6 text-center space-y-3">
+        <span class="text-4xl" id="quizEmoji">🐱</span>
+        <h4 class="text-lg font-bold" id="quizQuestion">고양이 슈미트 부인이 기분 좋을 때 내는 소리는?</h4>
+        <p class="text-xs text-muted-foreground">영어로 알맞은 단어를 선택하세요!</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3" id="quizOptions">
+        <button onclick="answerQuiz(true)" class="p-4 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:border-emerald-500 font-bold text-base hover:bg-emerald-50/20 transition">
+          A. Purr (골골골) ✨
+        </button>
+        <button onclick="answerQuiz(false)" class="p-4 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:border-red-400 font-bold text-base transition">
+          B. Bark (멍멍)
+        </button>
+      </div>
+
+      <div id="quizFeedback" class="hidden p-4 rounded-xl text-center font-bold text-sm bg-emerald-100 text-emerald-900 border border-emerald-300">
+        🎉 정답입니다! 마법 에너지가 차올랐어요!
+      </div>
+    </section>
+
+    <!-- Footer Note -->
+    <footer class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 text-xs text-[var(--muted-foreground)] flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">💖</span>
+        <span>수아의 흥미와 상상력에 맞춰 언제든 새로운 책과 놀이 모드를 확장할 수 있습니다.</span>
+      </div>
+      <div class="flex items-center gap-2 font-semibold">
+        <span>이미지 스타일: 따뜻한 수채화 동화책풍</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Theme Database with Real Generated Image Paths
+    const themes = {
+      lily: {
+        id: 'lily',
+        title: '동물과 말하는 아이 릴리',
+        subtitle: 'The Secret Animal Whispering Woods',
+        image: './liliane_susewind_forest_1792557501868.jpg',
+        sceneTitle: '숲속의 릴리와 슈미트 부인',
+        english: 'Mrs. Schmidt says: "Look up! A tiny baby bird fell from the nest!"',
+        korean: '슈미트 부인이 말해요: "저기 위를 봐! 아주 작은 아기 새가 둥지에서 떨어졌어!"',
+        keyWords: ['baby bird (아기 새)', 'fell (떨어졌다)', 'nest (둥지)'],
+        choices: [
+          {
+            text: '"Don\'t worry, baby bird!"',
+            subtext: '걱정 마, 아기 새야! (상냥하게 안심시키기)',
+            reply: 'Purr~ 아기 새가 수아의 목소리를 듣고 안심했어요!',
+            badge: '🌱 숲의 속삭임'
+          },
+          {
+            text: '"Bonsai, help us gently!"',
+            subtext: '본자이야, 조심해서 도와줘! (강아지 본자이 부르기)',
+            reply: '본자이가 꼬리를 흔들며 푹신한 나뭇잎을 물어왔어요!',
+            badge: '🐾 본자이의 친구'
+          }
+        ],
+        ispy: {
+          image: './liliane_susewind_forest_1792557501868.jpg',
+          question: 'Touch the proud orange cat, Mrs. Schmidt!',
+          audioText: 'Touch the proud orange cat, Mrs. Schmidt!',
+          korean: '도도한 주황색 고양이, 슈미트 부인을 터치해 보세요!',
+          hotspots: [
+            { name: 'Mrs. Schmidt', top: '44%', left: '46%', width: '15%', height: '35%', correct: true, feedback: '찾았다! 슈미트 부인이 골골거리며 반가워해요!' },
+            { name: 'Liliane', top: '35%', left: '60%', width: '20%', height: '45%', correct: false, feedback: '이 친구는 빨간 머리 소녀 릴리예요! 슈미트 부인을 찾아볼까요?' },
+            { name: 'Bonsai', top: '53%', left: '20%', width: '18%', height: '30%', correct: false, feedback: '귀여운 강아지 본자이네요! 주황색 고양이를 찾아보세요!' }
+          ]
+        }
+      },
+      yasuke: {
+        id: 'yasuke',
+        title: '요괴의 아이를 돌봐드립니다',
+        subtitle: 'Yasuke\'s Little Monster Daycare',
+        image: './yasuke_yokai_nursery_1792557499411.jpg',
+        sceneTitle: '야스케와 날고 싶은 아기 텐구',
+        english: 'Baby Tengu flaps his wings: "I am hungry! Give me sweet snacks!"',
+        korean: '아기 텐구가 날개를 퍼덕여요: "배고파요! 달콤한 간식을 줘요!"',
+        keyWords: ['hungry (배고픈)', 'wings (날개)', 'sweet snacks (달콤한 간식)'],
+        choices: [
+          {
+            text: '"Here is a sweet apple!"',
+            subtext: '여기 달콤한 사과야! (건강한 간식 주기)',
+            reply: '아기 텐구가 "Yummy!" 하며 신나게 사과를 베어 물었어요!',
+            badge: '🍎 최고의 보모'
+          },
+          {
+            text: '"Wash your hands first!"',
+            subtext: '손 먼저 씻어야지! (예절 가르치기)',
+            reply: '야스케가 감탄했어요: "수아 덕분에 아기 요괴가 손을 깨끗이 씻었어요!"',
+            badge: '🧼 바른 생활 대장'
+          }
+        ],
+        ispy: {
+          image: './yasuke_yokai_nursery_1792557499411.jpg',
+          question: 'Find the sweet red apple baby Tengu is holding!',
+          audioText: 'Find the sweet red apple baby Tengu is holding!',
+          korean: '아기 텐구가 손에 쥐고 있는 달콤한 빨간 사과를 터치하세요!',
+          hotspots: [
+            { name: 'Red Apple', top: '60%', left: '49%', width: '9%', height: '11%', correct: true, feedback: '빙고! 아삭아삭 맛있는 빨간 사과를 찾았어요!' },
+            { name: 'Fire Sprite', top: '35%', left: '26%', width: '13%', height: '22%', correct: false, feedback: '정원에 떠 있는 귀여운 불도깨비예요! 아기 텐구의 손을 보세요!' },
+            { name: 'Yasuke', top: '22%', left: '55%', width: '25%', height: '65%', correct: false, feedback: '상냥한 소년 야스케예요! 빨간 사과를 찾아보세요!' }
+          ]
+        }
+      },
+      catwolf: {
+        id: 'catwolf',
+        title: '고양이 늑대의 전설',
+        subtitle: 'The Tale of the Brave Cat-Wolf',
+        image: './cat_wolf_storybook_1792557502059.jpg',
+        sceneTitle: '달빛 숲을 수호하는 캣울프',
+        english: 'Cat-Wolf howls at the moon: "The forest is dark! Follow my green eyes!"',
+        korean: '캣울프가 달을 향해 울어요: "숲이 어두워! 나의 초록빛 눈을 따라와!"',
+        keyWords: ['dark forest (어두운 숲)', 'howl (울부짖다)', 'green eyes (초록빛 눈)'],
+        choices: [
+          {
+            text: '"Run fast, Cat-Wolf!"',
+            subtext: '빨리 달려, 캣울프야! (신나게 달리기)',
+            reply: '캣울프가 꼬리를 휘날리며 바람처럼 빠르게 앞장섭니다!',
+            badge: '⚡ 달빛 질주'
+          },
+          {
+            text: '"I am not afraid with you!"',
+            subtext: '너와 함께라면 무섭지 않아! (용기 내기)',
+            reply: '캣울프가 고양이처럼 골골거리며 수아의 곁을 든든하게 지켜줍니다!',
+            badge: '💖 숲의 수호자'
+          }
+        ],
+        ispy: {
+          image: './cat_wolf_storybook_1792557502059.jpg',
+          question: 'Touch the big shining full moon in the dark sky!',
+          audioText: 'Touch the big shining full moon in the dark sky!',
+          korean: '밤하늘에 환하게 뜬 크고 둥근 보름달을 터치해 보세요!',
+          hotspots: [
+            { name: 'Full Moon', top: '7%', left: '33%', width: '23%', height: '30%', correct: true, feedback: '멋져요! 숲을 환하게 비추는 보름달을 찾았어요!' },
+            { name: 'Cat-Wolf', top: '13%', left: '44%', width: '30%', height: '70%', correct: false, feedback: '멋진 캣울프예요! 캣울프 머리 뒤 하늘의 달을 터치해보세요!' }
+          ]
+        }
+      }
+    };
+
+    let currentThemeKey = 'lily';
+    let currentActivity = 'story';
+    let currentBlocks = { who: 'Cat-Wolf', where: 'under the silver moon', action: 'eating sweet apple pie' };
+
+    function switchTheme(themeKey) {
+      currentThemeKey = themeKey;
+
+      // Update Theme Button Active States
+      ['lily', 'yasuke', 'catwolf'].forEach(key => {
+        const btn = document.getElementById(`btn-${key}`);
+        if (key === themeKey) {
+          btn.classList.add('tab-active');
+          btn.classList.remove('border-[var(--border)]');
+          if (key === 'lily') btn.classList.add('border-emerald-500', 'bg-emerald-50/30');
+          if (key === 'yasuke') btn.classList.add('border-amber-500', 'bg-amber-50/30');
+          if (key === 'catwolf') btn.classList.add('border-purple-500', 'bg-purple-50/30');
+        } else {
+          btn.classList.remove('tab-active', 'border-emerald-500', 'border-amber-500', 'border-purple-500', 'bg-emerald-50/30', 'bg-amber-50/30', 'bg-purple-50/30');
+          btn.classList.add('border-[var(--border)]');
+        }
+      });
+
+      renderCurrentTheme();
+      saveUserData();
+    }
+
+    function renderCurrentTheme() {
+      const data = themes[currentThemeKey];
+
+      // Story Activity Render
+      document.getElementById('storyMainImage').src = data.image;
+      document.getElementById('storySceneTitle').innerText = data.sceneTitle;
+      document.getElementById('englishText').innerText = data.english;
+      document.getElementById('koreanText').innerText = data.korean;
+
+      // Keywords Render
+      const kwBox = document.getElementById('keyWordsContainer');
+      kwBox.innerHTML = '<span class="text-xs font-bold text-[var(--muted-foreground)]">오늘의 핵심 쏙쏙 단어:</span>';
+      data.keyWords.forEach(kw => {
+        const span = document.createElement('span');
+        span.className = 'text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200 font-semibold';
+        span.innerText = kw;
+        kwBox.appendChild(span);
+      });
+
+      // Choices Render
+      const choicesBox = document.getElementById('choiceOptions');
+      choicesBox.innerHTML = '';
+      data.choices.forEach((c, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'text-left p-4 rounded-xl border border-[var(--border)] bg-[var(--sidebar)] hover:border-emerald-500 hover:bg-emerald-50/30 transition flex flex-col justify-between group';
+        btn.onclick = () => selectChoice(c);
+        btn.innerHTML = `
+          <div class="flex items-center justify-between w-full">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">선택 ${idx + 1}</span>
+            <span class="text-xs text-muted-foreground group-hover:text-emerald-600 transition">선택하기 👆</span>
+          </div>
+          <p class="font-bold text-sm text-[var(--foreground)] mt-2">${c.text}</p>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">${c.subtext}</p>
+        `;
+        choicesBox.appendChild(btn);
+      });
+
+      // Reset feedback
+      document.getElementById('feedbackBanner').classList.add('hidden');
+      document.getElementById('nextBtn').classList.add('hidden');
+
+      // I-Spy Activity Render
+      renderIspy();
+    }
+
+    function renderIspy() {
+      const ispy = themes[currentThemeKey].ispy;
+      document.getElementById('ispyImage').src = ispy.image;
+      document.getElementById('ispyQuestionText').innerText = `"${ispy.question}"`;
+
+      const hsContainer = document.getElementById('hotspotContainer');
+      hsContainer.innerHTML = '';
+
+      ispy.hotspots.forEach(spot => {
+        const div = document.createElement('div');
+        div.className = 'interactive-hotspot';
+        div.style.top = spot.top;
+        div.style.left = spot.left;
+        div.style.width = spot.width;
+        div.style.height = spot.height;
+        div.title = spot.name;
+
+        div.onclick = () => {
+          speak(spot.correct ? "Great job! You found it!" : "Try again!");
+          const toast = document.getElementById('ispyToast');
+          toast.classList.remove('hidden');
+          document.getElementById('ispyToastTitle').innerText = spot.correct ? "🎉 정답입니다! (Bingo!)" : "💡 조금 더 찾아볼까요?";
+          document.getElementById('ispyToastDesc').innerText = spot.feedback;
+
+          if (spot.correct) {
+            document.getElementById('treasureScore').innerText = "6개 🌟";
+            saveUserData();
+          }
+        };
+        hsContainer.appendChild(div);
+      });
+    }
+
+    function playIspyAudio() {
+      speak(themes[currentThemeKey].ispy.audioText);
+    }
+
+    function nextIspyMission() {
+      alert("🎉 멋져요! 이 장면의 숨겨진 보물을 모두 찾았습니다. 다른 테마나 활동을 즐겨보세요!");
+      document.getElementById('ispyToast').classList.add('hidden');
+    }
+
+    function switchActivity(actId) {
+      currentActivity = actId;
+      const panels = ['story', 'ispy', 'maker', 'quiz'];
+
+      panels.forEach(id => {
+        const p = document.getElementById(`panel-${id}`);
+        const tabBtn = document.getElementById(`act-${id}`);
+        if (id === actId) {
+          p.classList.remove('hidden');
+          tabBtn.className = 'activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 transition';
+        } else {
+          p.classList.add('hidden');
+          tabBtn.className = 'activity-tab px-4 py-2 rounded-xl font-bold text-sm bg-[var(--card)] border border-[var(--border)] hover:bg-[var(--sidebar)] text-[var(--foreground)] flex items-center gap-1.5 transition';
+        }
+      });
+    }
+
+    // TTS Voice synthesis
+    function speak(txt) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(txt);
+        u.lang = 'en-US';
+        u.rate = 0.85;
+        u.pitch = 1.1;
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    function playCurrentAudio() {
+      speak(themes[currentThemeKey].english);
+    }
+
+    function toggleTranslation() {
+      const ko = document.getElementById('koreanText');
+      ko.style.display = ko.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function selectChoice(c) {
+      speak(c.text);
+      const fb = document.getElementById('feedbackBanner');
+      fb.classList.remove('hidden');
+      document.getElementById('feedbackTitle').innerText = `🎉 칭호 획득: [${c.badge}]`;
+      document.getElementById('feedbackDesc').innerText = c.reply;
+      document.getElementById('nextBtn').classList.remove('hidden');
+    }
+
+    function simulateMic() {
+      const btn = document.getElementById('micBtn');
+      const t = document.getElementById('micStatusTitle');
+      const d = document.getElementById('micStatusDesc');
+
+      btn.classList.add('animate-pulse', 'scale-110', 'bg-red-500', 'text-white');
+      t.innerText = "수아의 목소리를 귀담아듣고 있어요...";
+      d.innerText = "큰 소리로 말해보세요!";
+
+      setTimeout(() => {
+        btn.classList.remove('animate-pulse', 'scale-110', 'bg-red-500', 'text-white');
+        t.innerText = "발음 최고! (Superb pronunciation!)";
+        d.innerText = "친구들이 수아의 목소리를 듣고 기뻐합니다!";
+        selectChoice(themes[currentThemeKey].choices[0]);
+      }, 2000);
+    }
+
+    function nextStoryScene() {
+      alert("✨ 에피소드 완료! 수아의 활약으로 동물 친구들이 행복해졌어요!\n이제 상단의 '그림 속 숨은 단어 찾기'나 'AI 마법 그림 공방'도 즐겨보세요!");
+    }
+
+    // Maker Block logic
+    function pickBlock(type, val, btn) {
+      currentBlocks[type] = val;
+      const group = document.getElementById(`${type}Blocks`).children;
+      for (let b of group) {
+        b.classList.remove('border-purple-500', 'border-blue-500', 'border-emerald-500', 'bg-purple-100', 'bg-blue-100', 'bg-emerald-100', 'font-bold');
+      }
+      btn.classList.add('font-bold', type === 'who' ? 'border-purple-500' : (type === 'where' ? 'border-blue-500' : 'border-emerald-500'), type === 'who' ? 'bg-purple-50' : (type === 'where' ? 'bg-blue-50' : 'bg-emerald-50'));
+
+      const s = `"${currentBlocks.who} is ${currentBlocks.where} ${currentBlocks.action}!"`;
+      document.getElementById('makerSentence').innerText = s;
+    }
+
+    function speakMakerSpell() {
+      speak(document.getElementById('makerSentence').innerText);
+    }
+
+    function generateCustomCard() {
+      speak("Magic cast! Generating your new storybook card!");
+      const card = document.getElementById('makerResultCard');
+      card.classList.remove('hidden');
+      document.getElementById('makerCardTitle').innerText = `${currentBlocks.who}의 특별한 순간`;
+      document.getElementById('badgeScore').innerText = "5개 🏆";
+      saveUserData();
+      card.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Quiz logic
+    function answerQuiz(isCorrect) {
+      const fb = document.getElementById('quizFeedback');
+      fb.classList.remove('hidden');
+      if (isCorrect) {
+        speak("Purr! Correct answer!");
+        fb.innerText = "🎉 정답입니다! 슈미트 부인이 골골(Purr)거리며 애교를 부려요! 마법 게이지 100% 충전!";
+        fb.className = "p-4 rounded-xl text-center font-bold text-sm bg-emerald-100 text-emerald-900 border border-emerald-300";
+        document.getElementById('magicGauge').style.width = "100%";
+      } else {
+        speak("Try again!");
+        fb.innerText = "💡 멍멍은 강아지 본자이의 소리예요! 고양이 슈미트 부인의 소리를 다시 골라볼까요?";
+        fb.className = "p-4 rounded-xl text-center font-bold text-sm bg-amber-100 text-amber-900 border border-amber-300";
+      }
+    }
+
+    // LocalStorage State Management (No server/DB needed)
+    function loadUserData() {
+      try {
+        const saved = localStorage.getItem('sua_english_data');
+        if (saved) {
+          const d = JSON.parse(saved);
+          if (d.treasureScore) document.getElementById('treasureScore').innerText = d.treasureScore;
+          if (d.badgeScore) document.getElementById('badgeScore').innerText = d.badgeScore;
+          if (d.lastTheme && themes[d.lastTheme]) currentThemeKey = d.lastTheme;
+        }
+      } catch (e) {
+        console.warn('localStorage read error', e);
+      }
+    }
+
+    function saveUserData() {
+      try {
+        const d = {
+          treasureScore: document.getElementById('treasureScore').innerText,
+          badgeScore: document.getElementById('badgeScore').innerText,
+          lastTheme: currentThemeKey
+        };
+        localStorage.setItem('sua_english_data', JSON.stringify(d));
+      } catch (e) {
+        console.warn('localStorage save error', e);
+      }
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      loadUserData();
+      renderCurrentTheme();
+    });
+  </script>
+</body>
+</html>
